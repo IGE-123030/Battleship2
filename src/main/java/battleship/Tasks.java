@@ -5,6 +5,7 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.time.StopWatch;
 
 /**
  * The type Tasks.
@@ -66,18 +67,43 @@ public class Tasks {
 					if (myFleet != null)
 						game.printMyBoard(false, true);
 					break;
-				case RAJADA:
-					if (game != null) {
-						game.readEnemyFire(in);
-						myFleet.printStatus();
-						game.printMyBoard(true, false);
+                case RAJADA:
+                    if (game != null) {
+                        // 1. OBRIGA O JOGO A PEDIR OS TIROS NUMA NOVA LINHA
+                        System.out.println("Insira as 3 coordenadas para a rajada (ex: A1 B2 C3):");
 
-						if (game.getRemainingShips() == 0) {
-							game.over();
-							System.exit(0);
-						}
-					}
-					break;
+                        // 2. INICIA O CRONÓMETRO AQUI!
+                        StopWatch relogio = new StopWatch();
+                        relogio.start();
+
+                        // Limpa qualquer lixo que tenha ficado no buffer antes de pedir nova linha
+                        in.nextLine();
+
+                        // 3. O JOGO FICA AQUI PARADO À TUA ESPERA (O TEMPO ESTÁ A CONTAR)
+                        String coords = in.nextLine();
+
+                        // 4. PARA O CRONÓMETRO ASSIM QUE DÁS ENTER
+                        relogio.stop();
+
+                        long tempoEmSegundos = relogio.getTime() / 1000;
+                        System.out.println("🕒 Tempo gasto a pensar nesta jogada: " + tempoEmSegundos + " segundos.");
+
+                        // 5. AGORA SIM, MANDA AS COORDENADAS PARA O JOGO PROCESSAR
+
+                        Scanner coordsScanner = new Scanner(coords);
+                        game.readEnemyFire(coordsScanner);
+
+                        myFleet.printStatus();
+                        game.printMyBoard(true, false);
+
+                        if (game.getRemainingShips() == 0) {
+                            game.over();
+                            System.exit(0);
+                        }
+                    } else {
+                        System.out.println("Primeiro tens de gerar ou ler uma frota!");
+                    }
+                    break;
 				case SIMULA:
 					if (game != null) {
 						while (game.getRemainingShips() > 0){

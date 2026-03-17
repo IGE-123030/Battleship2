@@ -3,6 +3,7 @@ package battleship;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import util.I18n;
 
 import java.util.*;
 
@@ -82,9 +83,9 @@ public class Game implements IGame
 		System.out.println("-+");
 
 		if (showLegend) {
-			System.out.println("          LEGENDA");
-			System.out.println("'" + SHIP_MARKER + "'->navio, '" + SHIP_ADJACENT_MARKER + "'->adjacente a navio, '" + EMPTY_MARKER + "'->água");
-			System.out.println("'" + SHOT_SHIP_MARKER + "'->Tiro certeiro, '" + SHOT_WATER_MARKER + "'->Tiro na água");
+			System.out.println("          " + I18n.get("board.legend"));
+			System.out.println("'" + SHIP_MARKER + "'->" + I18n.get("board.marker.ship") + ", '" + SHIP_ADJACENT_MARKER + "'->" + I18n.get("board.marker.adjacent") + ", '" + EMPTY_MARKER + "'->" + I18n.get("board.marker.water"));
+			System.out.println("'" + SHOT_SHIP_MARKER + "'->" + I18n.get("board.marker.hit") + ", '" + SHOT_WATER_MARKER + "'->" + I18n.get("board.marker.miss"));
 		}
 		System.out.println();
 	}
@@ -245,7 +246,7 @@ public class Game implements IGame
 				shots.add(newShot);
 		}
 
-		System.out.print("rajada ");
+		System.out.print(I18n.get("msg.volley_label") + " ");
 		for (IPosition shot : shots)
 			System.out.print(shot + " ");
 		System.out.println();
@@ -289,7 +290,7 @@ public class Game implements IGame
 					int row = inputScanner.nextInt();
 					shots.add(new Position(token.toUpperCase().charAt(0), row));
 				} else {
-					throw new IllegalArgumentException("Posição incompleta! A coluna '" + token + "' não é seguida por uma linha.");
+					throw new IllegalArgumentException(I18n.get("error.incomplete_pos", token));
 				}
 			} else {
 				// Caso o token já contenha a coluna e a linha juntas (ex.: "A3")
@@ -299,7 +300,7 @@ public class Game implements IGame
 		}
 
 		if (shots.size() != NUMBER_SHOTS) {
-			throw new IllegalArgumentException("Você deve inserir exatamente " + NUMBER_SHOTS + " posições!");
+			throw new IllegalArgumentException(I18n.get("error.must_fire_n", NUMBER_SHOTS));
 		}
 
 		this.fireShots(shots);
@@ -437,7 +438,7 @@ public class Game implements IGame
 	public void over() {
 			System.out.println();
 			System.out.println("+--------------------------------------------------------------+");
-			System.out.println("| Maldito sejas, Java Sparrow, eu voltarei, glub glub glub ... |");
+			System.out.printf("| %-60s |\n", I18n.get("msg.game_over_pirate"));
 			System.out.println("+--------------------------------------------------------------+");
 	}
 }

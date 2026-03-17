@@ -3,6 +3,8 @@
  */
 package battleship;
 
+import util.I18n;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -421,9 +423,9 @@ public abstract class Ship implements IShip
 	 * @return the string
 	 */
 	@Override
-    public String toString()
-    {
-	return "[" + category + " " + bearing + " " + pos + "]";
+    public String toString() {
+		String translatedCategory = I18n.get("ship." + category.toLowerCase());
+		return "[" + translatedCategory + " " + bearing + " " + pos + "]";
     }
 
 }

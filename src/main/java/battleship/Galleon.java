@@ -1,5 +1,7 @@
 package battleship;
 
+import util.I18n;
+
 /**
  * The type Galleon represents a ship with a size of 5 units.
  * It is positioned on the game board based on its bearing and initial position.
@@ -18,7 +20,7 @@ public class Galleon extends Ship {
 	 * @param pos     The initial position of the ship on the game board.
 	 */
 	public Galleon(Compass bearing, IPosition pos) {
-		super("Galeao", bearing, pos, 5);
+		super("galeao", bearing, pos, 5);
 
 		switch (bearing) {
 			case NORTH:

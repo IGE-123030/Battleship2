@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import util.I18n;
+import org.apache.commons.lang3.time.StopWatch;
 
 import java.util.*;
 
@@ -274,7 +275,14 @@ public class Game implements IGame
 
 		assert in != null;
 
-		String input = in.nextLine().trim();
+
+    //mudanças para o relogio funcionar
+        String input = "";
+        while (in.hasNext()) {
+            input += in.next() + " ";
+        }
+        input = input.trim();
+
 
 		// Criar lista para armazenar os tiros
 		List<IPosition> shots = new ArrayList<>();

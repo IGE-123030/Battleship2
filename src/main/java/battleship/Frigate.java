@@ -1,5 +1,7 @@
 package battleship;
 
+import util.I18n;
+
 /**
  * The type Frigate represents a ship with a size of 4 units.
  * It is positioned on the game board based on its bearing and initial position.
@@ -17,7 +19,7 @@ public class Frigate extends Ship {
 	 * @param pos     The initial position of the ship on the game board.
 	 */
 	public Frigate(Compass bearing, IPosition pos) {
-		super("Fragata", bearing, pos, 4);
+		super("fragata", bearing, pos, 4);
 
 		switch (bearing) {
 			case NORTH:

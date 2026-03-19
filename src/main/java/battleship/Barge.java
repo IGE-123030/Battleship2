@@ -1,5 +1,7 @@
 package battleship;
 
+import util.I18n;
+
 /**
  * The type Barge represents a ship with a size of 1 unit.
  * It is positioned on the game board based on its bearing and initial position.
@@ -17,7 +19,7 @@ public class Barge extends Ship {
 	 * @param pos     The upper-left position of the barge on the game board.
 	 */
 	public Barge(Compass bearing, IPosition pos) {
-		super("Barca", bearing, pos, 1);
+		super("barca", bearing, pos, 1);
 
 		// Add the single position of the barge to the list of positions
 		getPositions().add(new Position(pos.getRow(), pos.getColumn()));

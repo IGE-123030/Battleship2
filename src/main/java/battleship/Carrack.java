@@ -1,5 +1,7 @@
 package battleship;
 
+import util.I18n;
+
 import java.util.List;
 
 /**
@@ -19,7 +21,7 @@ public class Carrack extends Ship {
 	 * @param pos     The initial position of the ship on the game board.
 	 */
 	public Carrack(Compass bearing, IPosition pos) {
-		super("Nau", bearing, pos, 3);
+		super("nau", bearing, pos, 3);
 
 		switch (bearing) {
 			case SOUTH:

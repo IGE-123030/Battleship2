@@ -5,227 +5,251 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.time.StopWatch;
 
-/**
- * The type Tasks.
- */
+import util.I18n;
+
 public class Tasks {
-	/**
-	 * The constant LOGGER.
-	 */
-	private static final Logger LOGGER = LogManager.getLogger();
 
-	/**
-	 * The constant GOODBYE_MESSAGE.
-	 */
-	private static final String GOODBYE_MESSAGE = "Bons ventos!";
+    private static final Logger LOGGER = LogManager.getLogger();
 
-	/**
-	 * Strings to be used by the user
-	 */
-	private static final String AJUDA = "ajuda";
-	private static final String GERAFROTA = "gerafrota";
-	private static final String LEFROTA = "lefrota";
-	private static final String DESISTIR = "desisto";
-	private static final String RAJADA = "rajada";
-	private static final String TIROS = "tiros";
-	private static final String MAPA = "mapa";
-	private static final String STATUS = "estado";
-	private static final String SIMULA = "simula";
+    private static final String GOODBYE_MESSAGE = "msg.goodbye";
 
-	/**
-	 * This task also tests the fighting element of a round of three shots
-	 */
-	public static void menu() {
-		DatabaseManager.setupDatabase(); // Cria a tabela se não existir-B7
+    private static final String AJUDA = "cmd.help";
+    private static final String GERAFROTA = "cmd.genfleet";
+    private static final String LEFROTA = "cmd.loadfleet";
+    private static final String DESISTIR = "cmd.surrender";
+    private static final String RAJADA = "cmd.volley";
+    private static final String TIROS = "cmd.shots";
+    private static final String MAPA = "cmd.map";
+    private static final String STATUS = "cmd.status";
+    private static final String SIMULA = "cmd.simulate";
 
-		IFleet myFleet = null;
-		IGame game = null;
-		menuHelp();
+    public static void menu() {
+        
+        // Inicialização da Base de Dados (Código do Mauro)
+        DatabaseManager.setupDatabase(); 
 
-		System.out.print("> ");
-		Scanner in = new Scanner(System.in);
-		String command = in.next();
-		while (!command.equals(DESISTIR)) {
+        IFleet myFleet = null;
+        IGame game = null;
 
-			switch (command) {
-				case GERAFROTA:
-					myFleet = Fleet.createRandom();
-					game = new Game(myFleet);
-					game.printMyBoard(false, true);
-					break;
-				case LEFROTA:
-					myFleet = buildFleet(in);
-					game = new Game(myFleet);
-					game.printMyBoard(false, true);
-					break;
-				case STATUS:
-					if (myFleet != null)
-						myFleet.printStatus();
-					break;
-				case MAPA:
-					if (myFleet != null)
-						game.printMyBoard(false, true);
-					break;
-				case RAJADA:
-					if (game != null) {
-						game.readEnemyFire(in);
-						myFleet.printStatus();
-						game.printMyBoard(true, false);
+        Scanner in = new Scanner(System.in);
 
-						if (game.getRemainingShips() == 0) {
-							game.over();
-							System.exit(0);
-						}
-					}
-					break;
-				case SIMULA:
-					if (game != null) {
-						while (game.getRemainingShips() > 0){
-							game.randomEnemyFire();
-							myFleet.printStatus();
-							game.printMyBoard(true, false);
-							try {
-								Thread.sleep(3000);
-							} catch (InterruptedException e) {
-								Thread.currentThread().interrupt(); // Best practice: restore interrupt status
-							}
-						}
+        menuHelp();
 
-						if (game.getRemainingShips() == 0) {
-							game.over();
-							System.exit(0);
-						}
-					}
-					break;
-				case TIROS:
-					if (game != null)
-						game.printMyBoard(true, true);
-					break;
-                case AJUDA:
-                    menuHelp();
-                    break;
-				default:
-					System.out.println("Que comando é esse??? Repete ...");
-			}
-			System.out.print("> ");
-			command = in.next();
-		}
-		System.out.println(GOODBYE_MESSAGE);
-	}
+        System.out.print("> ");
+        String command = in.next();
 
-	/**
-	 * This function provides help information about the menu commands.
-	 */
-	public static void menuHelp() {
-		System.out.println("======================= AJUDA DO MENU =========================");
-		System.out.println("Digite um dos comandos abaixo para interagir com o jogo:");
-		System.out.println("- " + GERAFROTA + ": Gera uma frota aleatória de navios.");
-		System.out.println("- " + LEFROTA + ": Permite criar e carregar uma frota personalizada.");
-		System.out.println("- " + STATUS + ": Mostra o status atual da frota.)");
-		System.out.println("- " + MAPA + ": Exibe o mapa da frota.");
-		System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
-		System.out.println("- " + SIMULA + ": Simula um jogo completo.");
-		System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
-		System.out.println("- " + DESISTIR + ": Encerra o jogo.");
-		System.out.println("===============================================================");
-	}
-	/**
-	 * This operation allows the build up of a fleet, given user data
-	 *
-	 * @param in The scanner to read from
-	 * @return The fleet that has been built
-	 */
-	public static Fleet buildFleet(Scanner in) {
+        while (!command.equalsIgnoreCase(I18n.get(DESISTIR))) {
 
-		assert in != null;
+            if (command.equalsIgnoreCase(I18n.get(GERAFROTA))) {
 
-		Fleet fleet = new Fleet();
-		int i = 0; // i represents the total of successfully created ships
-		while (i < Fleet.FLEET_SIZE) {
-			IShip s = readShip(in);
-			if (s != null) {
-				boolean success = fleet.addShip(s);
-				if (success)
-					i++;
-				else
-					LOGGER.info("Falha na criacao de {} {} {}", s.getCategory(), s.getBearing(), s.getPosition());
-			} else {
-				LOGGER.info("Navio desconhecido!");
-			}
-		}
-		LOGGER.info("{} navios adicionados com sucesso!", i);
-		return fleet;
-	}
+                myFleet = Fleet.createRandom();
+                game = new Game(myFleet);
 
-	/**
-	 * This operation reads data about a ship, build it and returns it
-	 *
-	 * @param in The scanner to read from
-	 * @return The created ship based on the data that has been read
-	 */
-	public static Ship readShip(Scanner in) {
+                game.printMyBoard(false, true);
+                System.out.println(I18n.get("msg.fleet.random"));
 
-		assert in != null;
+                IGame finalGame = game;
+                javax.swing.SwingUtilities.invokeLater(() -> BoardGUI.showBoard(finalGame));
 
-		String shipKind = in.next();
-		Position pos = readPosition(in);
-		char c = in.next().charAt(0);
-		Compass bearing = Compass.charToCompass(c);
-		return Ship.buildShip(shipKind, bearing, pos);
-	}
+            } else if (command.equalsIgnoreCase(I18n.get(LEFROTA))) {
 
-	/**
-	 * This operation allows reading a position in the map
-	 *
-	 * @param in The scanner to read from
-	 * @return The position that has been read
-	 */
-	public static Position readPosition(Scanner in) {
+                myFleet = buildFleet(in);
+                game = new Game(myFleet);
 
-		assert in != null;
+                game.printMyBoard(false, true);
+                System.out.println(I18n.get("msg.fleet.custom"));
 
-		int row = in.nextInt();
-		int column = in.nextInt();
-		return new Position(row, column);
-	}
+                IGame finalGame1 = game;
+                javax.swing.SwingUtilities.invokeLater(() -> BoardGUI.showBoard(finalGame1));
 
-	/**
-	 * This operation allows reading a position in the map
-	 *
-	 * @param in The scanner to read from
-	 * @return The classic position that has been read
-	 */
-	public static IPosition readClassicPosition(@NotNull Scanner in) {
-		// Verifica se ainda há tokens disponíveis
-		if (!in.hasNext()) {
-			throw new IllegalArgumentException("Nenhuma posição válida encontrada!");
-		}
+            } else if (command.equalsIgnoreCase(I18n.get(STATUS))) {
 
-		String part1 = in.next(); // Primeiro token
-		String part2 = null;
+                if (myFleet != null)
+                    myFleet.printStatus();
+                else
+                    System.out.println(I18n.get("msg.error.need_fleet"));
 
-		if (in.hasNextInt()) {
-			part2 = in.next(); // Segundo token, se disponível
-		}
+            } else if (command.equalsIgnoreCase(I18n.get(MAPA))) {
 
-		String input = (part2 != null) ? part1 + part2 : part1;
+                if (game != null)
+                    game.printMyBoard(false, true);
+                else
+                    System.out.println(I18n.get("msg.error.need_fleet"));
 
-		// Normalizar o input para tratar letras maiúsculas e minúsculas
-		input = input.toUpperCase();
+            } else if (command.equalsIgnoreCase(I18n.get(RAJADA))) {
 
-		// Verificar os dois formatos possíveis: compactos e com espaço
-		if (input.matches("[A-Z]\\d+")) {
-			char column = input.charAt(0); // Extrair a coluna
-			int row = Integer.parseInt(input.substring(1)); // Extrair a linha
-			return new Position(column, row);
-		} else if (part2 != null && part1.matches("[A-Z]") && part2.matches("\\d+")) {
-			char column = part1.charAt(0); // Extrair a coluna
-			int row = Integer.parseInt(part2); // Extrair a linha
-			return new Position(column, row);
-		} else {
-			throw new IllegalArgumentException("Formato inválido. Use 'A3', 'A 3' ou similar.");
-		}
-	}
+                if (game != null) {
 
+                    System.out.println(I18n.get("msg.prompt.volley"));
+
+                    StopWatch relogio = new StopWatch();
+                    relogio.start();
+
+                    in.nextLine(); // limpar buffer
+                    String coords = in.nextLine();
+
+                    relogio.stop();
+
+                    long tempo = relogio.getTime() / 1000;
+                    System.out.println(I18n.get("msg.time_spent", tempo));
+
+                    Scanner coordsScanner = new Scanner(coords);
+                    game.readEnemyFire(coordsScanner);
+
+                    myFleet.printStatus();
+                    game.printMyBoard(true, false);
+
+                    BoardGUI.refresh();
+
+                    if (game.getRemainingShips() == 0) {
+                        game.over();
+                        break;
+                    }
+
+                } else {
+                    System.out.println(I18n.get("msg.error.need_fleet"));
+                }
+
+            } else if (command.equalsIgnoreCase(I18n.get(SIMULA))) {
+
+                if (game != null) {
+
+                    while (game.getRemainingShips() > 0) {
+
+                        game.randomEnemyFire();
+                        myFleet.printStatus();
+                        game.printMyBoard(true, false);
+
+                        BoardGUI.refresh();
+
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+
+                    game.over();
+
+                } else {
+                    System.out.println(I18n.get("msg.error.need_fleet"));
+                }
+
+            } else if (command.equalsIgnoreCase(I18n.get(TIROS))) {
+
+                if (game != null)
+                    game.printMyBoard(true, true);
+
+            } else if (command.equalsIgnoreCase(I18n.get(AJUDA))) {
+
+                menuHelp();
+
+            } else {
+
+                System.out.println(I18n.get("msg.error.unknown_cmd"));
+            }
+
+            System.out.print("> ");
+            command = in.next();
+        }
+
+        System.out.println(I18n.get(GOODBYE_MESSAGE));
+    }
+
+    public static void menuHelp() {
+        System.out.println("=== " + I18n.get("desc.help").toUpperCase() + " ===");
+        System.out.println(I18n.get("desc.instruction"));
+        System.out.println("- " + I18n.get(GERAFROTA) + ": " + I18n.get("desc.genfleet.cmd"));
+        System.out.println("- " + I18n.get(LEFROTA) + ": " + I18n.get("desc.loadfleet.cmd"));
+        System.out.println("- " + I18n.get(STATUS) + ": " + I18n.get("desc.status.cmd"));
+        System.out.println("- " + I18n.get(MAPA) + ": " + I18n.get("desc.map.cmd"));
+        System.out.println("- " + I18n.get(RAJADA) + ": " + I18n.get("desc.volley.cmd"));
+        System.out.println("- " + I18n.get(SIMULA) + ": " + I18n.get("desc.simulate.cmd"));
+        System.out.println("- " + I18n.get(TIROS) + ": " + I18n.get("desc.shots.cmd"));
+        System.out.println("- " + I18n.get(DESISTIR) + ": " + I18n.get("desc.surrender.cmd"));
+        System.out.println("===============================================================");
+    }
+
+    public static Fleet buildFleet(Scanner in) {
+
+        Fleet fleet = new Fleet();
+        int i = 0;
+
+        while (i < Fleet.FLEET_SIZE) {
+
+            IShip s = readShip(in);
+
+            if (s != null) {
+                boolean success = fleet.addShip(s);
+
+                if (success)
+                    i++;
+                else
+                    LOGGER.info("Falha na criacao de {} {} {}", s.getCategory(), s.getBearing(), s.getPosition());
+
+            } else {
+                LOGGER.info("Navio desconhecido!");
+            }
+        }
+
+        LOGGER.info("{} navios adicionados com sucesso!", i);
+        return fleet;
+    }
+
+    public static Ship readShip(Scanner in) {
+
+        String shipKind = in.next();
+        Position pos = readPosition(in);
+        char c = in.next().charAt(0);
+
+        Compass bearing = Compass.charToCompass(c);
+
+        return Ship.buildShip(shipKind, bearing, pos);
+    }
+
+    public static Position readPosition(Scanner in) {
+
+        int row = in.nextInt();
+        int column = in.nextInt();
+
+        return new Position(row, column);
+    }
+
+    public static IPosition readClassicPosition(@NotNull Scanner in) {
+
+        if (!in.hasNext()) {
+            throw new IllegalArgumentException("Nenhuma posição válida encontrada!");
+        }
+
+        String part1 = in.next();
+        String part2 = null;
+
+        if (in.hasNextInt()) {
+            part2 = in.next();
+        }
+
+        String input = (part2 != null) ? part1 + part2 : part1;
+
+        input = input.toUpperCase();
+
+        if (input.matches("[A-Z]\\d+")) {
+
+            char column = input.charAt(0);
+            int row = Integer.parseInt(input.substring(1));
+
+            return new Position(column, row);
+
+        } else if (part2 != null && part1.matches("[A-Z]") && part2.matches("\\d+")) {
+
+            char column = part1.charAt(0);
+            int row = Integer.parseInt(part2);
+
+            return new Position(column, row);
+
+        } else {
+            throw new IllegalArgumentException("Formato inválido. Use 'A3' ou 'A 3'.");
+        }
+    }
 }

@@ -342,6 +342,19 @@ public class Game implements IGame
 
 		alienMoves.add(move);
 
+		// ============================================================
+		// NOVO CÓDIGO (PARTE B-7): INSERIR AQUI
+		// ============================================================
+
+		// 1. Gerar a String JSON dos tiros usando o teu método estático
+		String jsonString = Game.jsonShots(shots);
+
+		// 2. Chamar o DatabaseManager para guardar no MySQL
+		// Passamos o número da jogada, o JSON, e os teus contadores countHits/countSinks
+		DatabaseManager.saveMove(this.moveNumber, jsonString, this.countHits, this.countSinks);
+
+		// ============================================================
+
 		moveNumber++;
 	}
 

@@ -37,6 +37,7 @@ public class Tasks {
 	 * This task also tests the fighting element of a round of three shots
 	 */
 	public static void menu() {
+		DatabaseManager.setupDatabase(); // Cria a tabela se não existir-B7
 
 		IFleet myFleet = null;
 		IGame game = null;

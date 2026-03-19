@@ -16,6 +16,7 @@
 - [Code Architecture](#-code-architecture)
 - [Roadmap](#-roadmap)
 - [Contributing](#-contributing)
+- https://youtu.be/RS31wMh_lXI -> Link para video da Parte B do enunciado
 
 ---
 

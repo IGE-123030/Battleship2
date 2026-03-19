@@ -85,7 +85,7 @@
 			<scope>compile</scope>
 		</dependency>
 
-        <!-- dependencia para usar para o relogio de cronometro-->
+        <!-- Biblioteca Maven Relógio -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -97,6 +97,12 @@
             <groupId>com.ibm.icu</groupId>
             <artifactId>icu4j</artifactId>
             <version>74.2</version>
+        </dependency>
+    <!--Biblioteca Maven Vizualização Tabuleiro-->
+     <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>21</version>
         </dependency>
 	</dependencies>
 

@@ -5,6 +5,8 @@ import java.util.Scanner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
+import org.apache.commons.lang3.time.StopWatch;
+import util.I18n;
 
 /**
  * The type Tasks.
@@ -18,20 +20,21 @@ public class Tasks {
     /**
      * The constant GOODBYE_MESSAGE.
      */
-    private static final String GOODBYE_MESSAGE = "Bons ventos!";
+    //Anterior -> private static final String GOODBYE_MESSAGE = "Bons ventos!";
+    private static final String GOODBYE_MESSAGE = "msg.goodbye";
 
     /**
      * Strings to be used by the user
      */
-    private static final String AJUDA = "ajuda";
-    private static final String GERAFROTA = "gerafrota";
-    private static final String LEFROTA = "lefrota";
-    private static final String DESISTIR = "desisto";
-    private static final String RAJADA = "rajada";
-    private static final String TIROS = "tiros";
-    private static final String MAPA = "mapa";
-    private static final String STATUS = "estado";
-    private static final String SIMULA = "simula";
+    private static final String AJUDA = "cmd.help";
+    private static final String GERAFROTA = "cmd.genfleet";
+    private static final String LEFROTA = "cmd.loadfleet";
+    private static final String DESISTIR = "cmd.surrender";
+    private static final String RAJADA = "cmd.volley";
+    private static final String TIROS = "cmd.shots";
+    private static final String MAPA = "cmd.map";
+    private static final String STATUS = "cmd.status";
+    private static final String SIMULA = "cmd.simulate";
 
     /**
      * This task also tests the fighting element of a round of three shots
@@ -115,27 +118,103 @@ public class Tasks {
                     break;
                 default:
                     System.out.println("Que comando é esse??? Repete ...");
+        while (!command.equals(I18n.get(DESISTIR))) {
+
+            //Tive de trocar de switch-case para if-else devido às traduções.
+            if (command.equals(I18n.get(GERAFROTA))) {
+                myFleet = Fleet.createRandom();
+                game = new Game(myFleet);
+                game.printMyBoard(false, true);
+            } else if (command.equals(I18n.get(LEFROTA))) {
+                myFleet = buildFleet(in);
+                game = new Game(myFleet);
+                game.printMyBoard(false, true);
+            } else if (command.equals(I18n.get(STATUS))) {
+                if (myFleet != null) myFleet.printStatus();
+            } else if (command.equals(I18n.get(MAPA))) {
+                if (myFleet != null) game.printMyBoard(false, true);
+            } else if (command.equals(I18n.get(RAJADA))) {
+                if (game != null) {
+                    // 1. OBRIGA O JOGO A PEDIR OS TIROS NUMA NOVA LINHA
+                    System.out.println(I18n.get("msg.prompt.volley"));
+
+                    // 2. INICIA O CRONÓMETRO AQUI!
+                    StopWatch relogio = new StopWatch();
+                    relogio.start();
+
+                    // Limpa qualquer lixo que tenha ficado no buffer antes de pedir nova linha
+                    in.nextLine();
+
+                    // 3. O JOGO FICA AQUI PARADO À TUA ESPERA (O TEMPO ESTÁ A CONTAR)
+                    String coords = in.nextLine();
+
+                    // 4. PARA O CRONÓMETRO ASSIM QUE DÁS ENTER
+                    relogio.stop();
+
+                    long tempoEmSegundos = relogio.getTime() / 1000;
+                    System.out.println(I18n.get("msg.time_spent", tempoEmSegundos));
+
+                    // 5. AGORA SIM, MANDA AS COORDENADAS PARA O JOGO PROCESSAR
+
+                    Scanner coordsScanner = new Scanner(coords);
+                    game.readEnemyFire(coordsScanner);
+
+                    myFleet.printStatus();
+                    game.printMyBoard(true, false);
+
+                    if (game.getRemainingShips() == 0) {
+                        game.over();
+                        System.exit(0);
+                    }
+                } else {
+                    System.out.println(I18n.get("msg.error.need_fleet"));
+                }
+            } else if (command.equals(I18n.get(SIMULA))) {
+                if (game != null) {
+                    while (game.getRemainingShips() > 0) {
+                        game.randomEnemyFire();
+                        myFleet.printStatus();
+                        game.printMyBoard(true, false);
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt(); // Best practice: restore interrupt status
+                        }
+                    }
+
+                    if (game.getRemainingShips() == 0) {
+                        game.over();
+                        System.exit(0);
+                    }
+                }
+            } else if (command.equals(I18n.get(TIROS))) {
+                if (game != null)
+                    game.printMyBoard(true, true);
+            } else if (command.equals(I18n.get(AJUDA))) {
+                menuHelp();
+            } else {
+                System.out.println(I18n.get("msg.error.unknown_cmd"));
             }
             System.out.print("> ");
             command = in.next();
         }
-        System.out.println(GOODBYE_MESSAGE);
+        System.out.println(I18n.get(GOODBYE_MESSAGE));
     }
 
     /**
      * This function provides help information about the menu commands.
      */
     public static void menuHelp() {
-        System.out.println("======================= AJUDA DO MENU =========================");
-        System.out.println("Digite um dos comandos abaixo para interagir com o jogo:");
-        System.out.println("- " + GERAFROTA + ": Gera uma frota aleatória de navios.");
-        System.out.println("- " + LEFROTA + ": Permite criar e carregar uma frota personalizada.");
-        System.out.println("- " + STATUS + ": Mostra o status atual da frota.)");
-        System.out.println("- " + MAPA + ": Exibe o mapa da frota.");
-        System.out.println("- " + RAJADA + ": Realiza uma rajada de disparos.");
-        System.out.println("- " + SIMULA + ": Simula um jogo completo.");
-        System.out.println("- " + TIROS + ": Lista os tiros válidos realizados (* = tiro em navio, o = tiro na água)");
-        System.out.println("- " + DESISTIR + ": Encerra o jogo.");
+        System.out.println("=== " + I18n.get("desc.help").toUpperCase() + " ===");
+        System.out.println(I18n.get("desc.instruction"));
+        System.out.println("- " + I18n.get(GERAFROTA) + ": " + I18n.get("desc.genfleet.cmd"));
+        System.out.println("- " + I18n.get(LEFROTA) + ": " + I18n.get("desc.loadfleet.cmd"));
+        System.out.println("- " + I18n.get(STATUS) + ": " + I18n.get("desc.status.cmd"));
+        System.out.println("- " + I18n.get(MAPA) + ": " + I18n.get("desc.map.cmd"));
+        System.out.println("- " + I18n.get(RAJADA) + ": " + I18n.get("desc.volley.cmd"));
+        System.out.println("- " + I18n.get(SIMULA) + ": " + I18n.get("desc.simulate.cmd"));
+        System.out.println("- " + I18n.get(TIROS) + ": " + I18n.get("desc.shots.cmd"));
+        System.out.println("- " + I18n.get(DESISTIR) + ": " + I18n.get("desc.surrender.cmd"));
         System.out.println("===============================================================");
     }
 

@@ -26,6 +26,9 @@ public class Tasks {
     private static final String SIMULA = "cmd.simulate";
 
     public static void menu() {
+        
+        // Inicialização da Base de Dados (Código do Mauro)
+        DatabaseManager.setupDatabase(); 
 
         IFleet myFleet = null;
         IGame game = null;

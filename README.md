@@ -17,6 +17,7 @@
 - [Roadmap](#-roadmap)
 - [Contributing](#-contributing)
 - https://youtu.be/RS31wMh_lXI -> Link para video da Parte B do enunciado
+- https://youtu.be/YwQsVAAg5B8 -> Link para vídeo da Parte D do enunciado
 
 ---
 

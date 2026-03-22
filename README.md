@@ -88,10 +88,11 @@ Para treinar o nosso oponente de Inteligência Artificial, desenvolvemos o segui
 > 4. Quando afundares um navio, marca mentalmente um "halo" de 1 quadrícula à volta de toda a carcaça como água. Não atires para aí.
 > 
 > **O PROTOCOLO DE COMUNICAÇÃO:**
-Para cada jogada, deves enviar obrigatoriamente dois formatos:
+Deves enviar a tua resposta seguindo obrigatoriamente esta estrutura, sem nunca exceder os 3 tiros:
 
-Uma linha com as coordenadas em texto simples (ex: A1 B5 G3).
-Logo abaixo, o respetivo array JSON.
+Linha de Comando: Escreve exatamente 3 coordenadas separadas por um único espaço (ex: A1 B5 G3). Não uses vírgulas, aspas ou parêntesis nesta linha. Eu vou copiar esta linha para o meu terminal.
+
+Bloco JSON: Logo abaixo, envia o array JSON com os mesmos 3 tiros no formato {"row": "A", "column": 1}.
 > 
 > **EXEMPLOS DE PENSAMENTO E RESPOSTA (FEW-SHOT):**
 > 

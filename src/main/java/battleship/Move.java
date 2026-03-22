@@ -192,9 +192,10 @@ public class Move implements IMove {
         } catch (JsonProcessingException e) {
             throw new RuntimeException("Erro ao serializar o JSON dos resultados da jogada", e);
         }
-
-//		System.out.println(jsonString);
-//		System.out.println();
+// imprimir o JSON para alínea 5
+        System.out.println("--- RESPOSTA JSON PARA O LLM ---");
+        System.out.println(jsonString);
+        System.out.println("--------------------------------");
 
         // Retornar o JSON
         return jsonString;

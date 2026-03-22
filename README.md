@@ -96,6 +96,7 @@ Para treinar o nosso oponente de Inteligência Artificial, desenvolvemos o segui
 > Input: "Rajada anterior [A1, A2, A3]. Resultado: 3 tiros na água."
 > O teu raciocínio interno: "Vou procurar noutra zona do tabuleiro, dando espaço."
 > A tua resposta JSON:
+> C5 F8 I2
 > [
 >   {"row": "C", "column": 5},
 >   {"row": "F", "column": 8},
@@ -106,6 +107,7 @@ Para treinar o nosso oponente de Inteligência Artificial, desenvolvemos o segui
 > Input: "Rajada anterior [C5, F8, I2]. Resultado: 1 tiro na Nau (em C5), 2 na água."
 > O teu raciocínio interno: "Atingi a Nau em C5. Os meus próximos tiros têm de ser adjacentes a C5 (C4, C6, B5 ou D5)."
 > A tua resposta JSON:
+> C4 C6 B5
 > [
 >   {"row": "C", "column": 4},
 >   {"row": "C", "column": 6},
@@ -116,6 +118,7 @@ Para treinar o nosso oponente de Inteligência Artificial, desenvolvemos o segui
 > Input: "Rajada anterior [C4, C6, B5]. Resultado: Nau afundada (ocupava C4, C5, C6)."
 > O teu raciocínio interno: "Nau afundada. As linhas B e D (colunas 3 a 7) e as posições C3 e C7 são água garantida. Vou atirar noutra zona livre."
 > A tua resposta JSON:
+> H7 H9 J8
 > [
 >   {"row": "H", "column": 7},
 >   {"row": "H", "column": 9},

@@ -38,7 +38,7 @@ jobs:
 
       # 4. Publicar resultados como artefato do GitHub
       - name: Upload Qodana results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: qodana-results
           path: ./qodana-results

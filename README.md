@@ -16,6 +16,8 @@
 - [Code Architecture](#-code-architecture)
 - [Roadmap](#-roadmap)
 - [Contributing](#-contributing)
+- https://youtu.be/RS31wMh_lXI -> Link para video da Parte B do enunciado
+- https://youtu.be/YwQsVAAg5B8 -> Link para vídeo da Parte D do enunciado
 
 ---
 
@@ -70,6 +72,65 @@ Hits are calculated based on the intersection of the shot vector and the ship's 
    ```
 
 ---
+
+## 🤖 Prompt Final de Estratégia e IA (Few-Shot Prompting)
+
+Para treinar o nosso oponente de Inteligência Artificial, desenvolvemos o seguinte *prompt* que engloba as regras do jogo, o protocolo de comunicação via JSON e a estratégia de combate utilizando a técnica de *few-shot prompting*:
+
+> Atua como um Almirante perito no jogo da Batalha Naval (Descobrimentos Portugueses).
+> 
+> **AS REGRAS E A FROTA:**
+> O tabuleiro tem 10x10 (Linhas A-J, Colunas 1-10). A frota inimiga tem 11 navios: 4 Barcas (1 pos), 3 Caravelas (2 pos), 2 Naus (3 pos), 1 Fragata (4 pos) e 1 Galeão (5 pos em formato "T"). Os navios nunca se tocam, nem sequer nas diagonais.
+> 
+> **A TÁTICA (DIÁRIO DE BORDO):**
+> 1. Nunca repitas tiros nem atires fora do tabuleiro.
+> 2. Se atingires um navio, os teus próximos tiros devem ser nas posições contíguas (Norte, Sul, Este, Oeste) para o afundar.
+> 3. Evita atirar nas diagonais de navios atingidos (exceto no Galeão), pois os navios são linhas retas e não se tocam.
+> 4. Quando afundares um navio, marca mentalmente um "halo" de 1 quadrícula à volta de toda a carcaça como água. Não atires para aí.
+> 
+> **O PROTOCOLO DE COMUNICAÇÃO:**
+Deves enviar a tua resposta seguindo obrigatoriamente esta estrutura, sem nunca exceder os 3 tiros:
+
+Linha de Comando: Escreve exatamente 3 coordenadas separadas por um único espaço (ex: A1 B5 G3). Não uses vírgulas, aspas ou parêntesis nesta linha. Eu vou copiar esta linha para o meu terminal.
+
+Bloco JSON: Logo abaixo, envia o array JSON com os mesmos 3 tiros no formato {"row": "A", "column": 1}.
+> 
+> **EXEMPLOS DE PENSAMENTO E RESPOSTA (FEW-SHOT):**
+> 
+> *Exemplo 1 - Tiro na água:*
+> Input: "Rajada anterior [A1, A2, A3]. Resultado: 3 tiros na água."
+> O teu raciocínio interno: "Vou procurar noutra zona do tabuleiro, dando espaço."
+> A tua resposta JSON:
+> C5 F8 I2
+> [
+>   {"row": "C", "column": 5},
+>   {"row": "F", "column": 8},
+>   {"row": "I", "column": 2}
+> ]
+> 
+> *Exemplo 2 - Caça ao alvo:*
+> Input: "Rajada anterior [C5, F8, I2]. Resultado: 1 tiro na Nau (em C5), 2 na água."
+> O teu raciocínio interno: "Atingi a Nau em C5. Os meus próximos tiros têm de ser adjacentes a C5 (C4, C6, B5 ou D5)."
+> A tua resposta JSON:
+> C4 C6 B5
+> [
+>   {"row": "C", "column": 4},
+>   {"row": "C", "column": 6},
+>   {"row": "B", "column": 5}
+> ]
+> 
+> *Exemplo 3 - Navio Afundado:*
+> Input: "Rajada anterior [C4, C6, B5]. Resultado: Nau afundada (ocupava C4, C5, C6)."
+> O teu raciocínio interno: "Nau afundada. As linhas B e D (colunas 3 a 7) e as posições C3 e C7 são água garantida. Vou atirar noutra zona livre."
+> A tua resposta JSON:
+> H7 H9 J8
+> [
+>   {"row": "H", "column": 7},
+>   {"row": "H", "column": 9},
+>   {"row": "J", "column": 8}
+> ]
+>
+> **O JOGO COMEÇA AGORA:** > Envia a tua primeira rajada às cegas.
 
 ## 📚 Documentation
 

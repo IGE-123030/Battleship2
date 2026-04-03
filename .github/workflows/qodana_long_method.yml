@@ -1,5 +1,5 @@
 #122983 - Mariana Fonseca
-name: Qodana Code Smell Analysis
+name: Qodana - Long Method Detection
 
 on:
   push:
@@ -27,13 +27,9 @@ jobs:
       - name: Run Qodana inspection
         uses: jetbrains/qodana-action@v2023.3
         with:
-          # caminho para o código do projeto
           project-dir: .
-          # caminho onde os relatórios serão gerados
           results-dir: ./qodana-results
-          # define a profile customizada ou padrão
-          profile: default
-          # ignora falhas no build
+          qodana-yaml: .qodana_long_method.yaml  
           fail-threshold: 0
 
       # 4. Publicar resultados como artefato do GitHub
@@ -43,7 +39,7 @@ jobs:
           name: qodana-results
           path: ./qodana-results
 
-      # 5. Opcional: postar comentários no Pull Request
+
       - name: Comment Qodana results on PR
         uses: marocchino/sticky-pull-request-comment@v2
         if: github.event_name == 'pull_request'

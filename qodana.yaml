@@ -1,0 +1,34 @@
+# Configuração de inspeções baseada no livro Lanza & Marinescu
+version: "1.0"
+
+linter: jetbrains/qodana-jvm
+
+include:
+  - name: Java | Class metrics | Overly complex class
+  - name: Java | Class metrics | Class with too many methods
+  - name: Java | Class metrics | Class with too many fields
+
+# Configuração específica dos limites (Thresholds)
+profile:
+  name: GodClassDetection
+  inspections:
+    - name: OverlyComplexClass
+      severity: ERROR
+      options:
+        # Corresponde ao WMC (Weighted Method Count)
+        m_limit: 47
+    - name: ClassWithTooManyMethods
+      severity: WARNING
+      options:
+        # Corresponde ao NOM (Number of Methods) - Risco Muito Elevado
+        m_limit: 25
+    - name: ClassWithTooManyFields
+      severity: WARNING
+      options:
+        # Corresponde ao NOA (Number of Attributes)
+        m_limit: 14
+
+# Define o "Quality Gate": falha se encontrar 1 problema crítico
+failureConditions:
+  severityThresholds:
+    any: 1

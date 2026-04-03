@@ -27,13 +27,9 @@ jobs:
       - name: Run Qodana inspection
         uses: jetbrains/qodana-action@v2023.3
         with:
-          # caminho para o código do projeto
           project-dir: .
-          # caminho onde os relatórios serão gerados
           results-dir: ./qodana-results
-          # define a profile customizada ou padrão
-          profile: default
-          # ignora falhas no build
+          qodana-yaml: .qodana_long_method.yaml  
           fail-threshold: 0
 
       # 4. Publicar resultados como artefato do GitHub

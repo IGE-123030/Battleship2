@@ -17,7 +17,7 @@ profile:
     - name: LongMethod
       severity: WARNING
       options:
-        # Limite de linhas do método (ajusta conforme necessário)
+        # Limite de linhas do método
         lines_limit: 30
 
 # Define o "Quality Gate": falha se encontrar 1 problema crítico

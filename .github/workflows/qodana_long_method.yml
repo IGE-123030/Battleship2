@@ -24,9 +24,9 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # 3️⃣ Executar Qodana localmente (versão 2022.3)
+      # 3️⃣
       - name: Run Qodana inspection
-        uses: jetbrains/qodana-action@v2022.3
+        uses: jetbrains/qodana-action@v2023.3
         with:
           project-dir: .
           qodana-yaml: .qodana_long_method.yaml

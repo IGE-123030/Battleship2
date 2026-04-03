@@ -1,5 +1,5 @@
-122983 - Mariana Fonseca
-name: Qodana Code Smell Analysis
+#122983 - Mariana Fonseca
+name: Qodana - Long Method Detection
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
           name: qodana-results
           path: ./qodana-results
 
-      # 5. Opcional: postar comentários no Pull Request
+
       - name: Comment Qodana results on PR
         uses: marocchino/sticky-pull-request-comment@v2
         if: github.event_name == 'pull_request'

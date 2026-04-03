@@ -1,0 +1,53 @@
+122983 - Mariana Fonseca
+name: Qodana Code Smell Analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  qodana-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout do código
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Configurar o JDK (para projetos Java)
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
+      # 3. Executar o Qodana para análise de code smells
+      - name: Run Qodana inspection
+        uses: jetbrains/qodana-action@v2023.3
+        with:
+          # caminho para o código do projeto
+          project-dir: .
+          # caminho onde os relatórios serão gerados
+          results-dir: ./qodana-results
+          # define a profile customizada ou padrão
+          profile: default
+          # ignora falhas no build
+          fail-threshold: 0
+
+      # 4. Publicar resultados como artefato do GitHub
+      - name: Upload Qodana results
+        uses: actions/upload-artifact@v3
+        with:
+          name: qodana-results
+          path: ./qodana-results
+
+      # 5. Opcional: postar comentários no Pull Request
+      - name: Comment Qodana results on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          message: |
+            ✅ Qodana Code Smell Analysis completed!
+            Results are available as an artifact.

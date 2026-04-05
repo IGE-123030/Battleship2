@@ -4,31 +4,36 @@ version: "1.0"
 linter: jetbrains/qodana-jvm
 
 include:
+  # Aqui usa-se "name:"
   - name: Java | Class metrics | Overly complex class
   - name: Java | Class metrics | Class with too many methods
   - name: Java | Class metrics | Class with too many fields
+  - name: OverlyCoupledMethod
 
-# Configuração específica dos limites (Thresholds)
 profile:
-  name: GodClassDetection
+  name: QodanaQualityGates
   inspections:
-    - name: OverlyComplexClass
+    # --- Configurações dos teus amigos
+    - inspection: OverlyComplexClass
       severity: ERROR
       options:
-        # Corresponde ao WMC (Weighted Method Count)
         m_limit: 47
-    - name: ClassWithTooManyMethods
+    - inspection: ClassWithTooManyMethods
       severity: WARNING
       options:
-        # Corresponde ao NOM (Number of Methods) - Risco Muito Elevado
         m_limit: 25
-    - name: ClassWithTooManyFields
+    - inspection: ClassWithTooManyFields
       severity: WARNING
       options:
-        # Corresponde ao NOA (Number of Attributes)
         m_limit: 14
 
-# Define o "Quality Gate": falha se encontrar 1 problema crítico
+    # --- A tua configuração ---
+    - inspection: OverlyCoupledMethod
+      severity: ERROR
+      options:
+        # Define o número máximo de ligações/acoplamentos do teu método a outras classes
+        m_limit: 10
+
 failureConditions:
   severityThresholds:
     any: 1

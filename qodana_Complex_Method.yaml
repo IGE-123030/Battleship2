@@ -1,0 +1,27 @@
+# Aluno: [94255] - [Mauro Fortes]
+# Smell: Complex Method (Brain Method)
+version: "1.0"
+
+# 1. Ativamos a inspeção de métricas de métodos
+include:
+  - name: Java | Method metrics | Overly complex method
+
+profile:
+  name: qodana.starter
+  inspections:
+    - inspection: OverlyComplexMethod
+      severity: ERROR
+      options:
+        # Definimos o limite de 15. Como o teu método tem 37, 
+        # o Qodana vai marcá-lo como um erro crítico.
+        m_limit: 15
+
+# 2. Configuração do Java (mantemos o que tinhas)
+projectJDK: "25"
+
+# 3. O Quality Gate: Se encontrar 1 erro (o teu método), o pipeline FALHA.
+failureConditions:
+  severityThresholds:
+    any: 1
+
+linter: jetbrains/qodana-jvm:2025.3

@@ -1,0 +1,18 @@
+# Número de Aluno: 123030 - Nome: André Ribeiro
+name: Qodana - Feature Envy Detection
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  qodana:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Qodana Scan
+        uses: JetBrains/qodana-action@v2023.2
+        with:
+          args: --fail-threshold, 1 # O Quality Gate falha se detetar 1 ou mais instâncias

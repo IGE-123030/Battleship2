@@ -18,23 +18,23 @@ public abstract class Ship implements IShip
 	/**
 	 * The constant GALEAO.
 	 */
-	private static final String GALEAO = "galeao";
+	private static final String GALEAO = "Galeao";
 	/**
 	 * The constant FRAGATA.
 	 */
-	private static final String FRAGATA = "fragata";
+	private static final String FRAGATA = "Fragata";
 	/**
 	 * The constant NAU.
 	 */
-	private static final String NAU = "nau";
+	private static final String NAU = "Nau";
 	/**
 	 * The constant CARAVELA.
 	 */
-	private static final String CARAVELA = "caravela";
+	private static final String CARAVELA = "Caravela";
 	/**
 	 * The constant BARCA.
 	 */
-	private static final String BARCA = "barca";
+	private static final String BARCA = "Barca";
 
 	/**
 	 * Create a new ship

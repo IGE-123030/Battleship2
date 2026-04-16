@@ -1,5 +1,6 @@
 # ⚓ Battleship 2.0
 
+![CI Status](https://github.com/SEU_UTILIZADOR/Battleship2/actions/workflows/BuildTest.yml/badge.svg)
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
 ![Java Version](https://img.shields.io/badge/Java-17%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
@@ -182,8 +183,19 @@ graph TD
 
 ---
 
-## 🧪 Testing
-We use high-coverage unit testing to ensure game stability. Run tests using:
+## 🧪 Testes e Integração Contínua (CI)
+
+[cite_start]Para garantir a qualidade do código e assegurar que as refabricações não introduzem erros, utilizamos uma bateria de testes unitários com JUnit 6[cite: 8, 9, 28].
+
+### Automação com GitHub Actions (Parte B)
+Configurámos um workflow de Integração Contínua (`Java CI with Maven`) que automatiza as seguintes tarefas em cada **Push** ou **Pull Request** para o ramo `main`:
+
+* [cite_start]**Configuração do Ambiente:** Utilização do JDK 21 (Temurin)[cite: 28].
+* **Build e Compilação:** O Maven compila o projeto automaticamente para verificar erros de sintaxe.
+* [cite_start]**Execução de Testes:** Corre a bateria completa de testes unitários para validar o comportamento do código[cite: 72, 76].
+* **Geração de Javadoc:** Garante que a documentação técnica é gerada sem erros.
+
+Para correr os testes manualmente na sua máquina, use o comando:
 ```bash
 mvn test
 ```

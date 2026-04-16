@@ -268,4 +268,257 @@ public class ShipTest {
         // A segunda posição já é (6,5), logo 6 > 5. Condição executa!
         assertEquals(6, ship.getBottomMostPos(), "Error: BottomMost should update to 6.");
     }
+
+    // ==========================================
+    // getLeftMostPos() - CC: 3
+    // ==========================================
+
+    @Test
+    @DisplayName("getLeftMostPos1: Path 1 - Tamanho 1 (Loop não itera)")
+    void getLeftMostPos1() {
+        Ship tinyShip = new Ship("Tiny", Compass.NORTH, pos1, 1) {};
+        tinyShip.getPositions().add(pos1); // A nossa pos1 tem col=5
+        assertEquals(5, tinyShip.getLeftMostPos(), "Error: LeftMost should be 5.");
+    }
+
+    @Test
+    @DisplayName("getLeftMostPos2: Path 2 - Itera mas condição if falsa (coluna maior)")
+    void getLeftMostPos2() {
+        // As posições base são (5,5) e (6,5). Nenhuma coluna é menor que 5.
+        assertEquals(5, ship.getLeftMostPos(), "Error: LeftMost should remain 5.");
+    }
+
+    @Test
+    @DisplayName("getLeftMostPos3: Path 3 - Itera e condição if verdadeira (coluna menor)")
+    void getLeftMostPos3() {
+        // Colocamos a segunda posição com coluna 2 (que é menor que 5)
+        ship.getPositions().set(1, createMockPosition(5, 2, false));
+        assertEquals(2, ship.getLeftMostPos(), "Error: LeftMost should update to 2.");
+    }
+
+    // ==========================================
+    // getRightMostPos() - CC: 3
+    // ==========================================
+
+    @Test
+    @DisplayName("getRightMostPos1: Path 1 - Tamanho 1 (Loop não itera)")
+    void getRightMostPos1() {
+        Ship tinyShip = new Ship("Tiny", Compass.NORTH, pos1, 1) {};
+        tinyShip.getPositions().add(pos1);
+        assertEquals(5, tinyShip.getRightMostPos(), "Error: RightMost should be 5.");
+    }
+
+    @Test
+    @DisplayName("getRightMostPos2: Path 2 - Itera mas condição if falsa (coluna menor)")
+    void getRightMostPos2() {
+        assertEquals(5, ship.getRightMostPos(), "Error: RightMost should remain 5.");
+    }
+
+    @Test
+    @DisplayName("getRightMostPos3: Path 3 - Itera e condição if verdadeira (coluna maior)")
+    void getRightMostPos3() {
+        ship.getPositions().set(1, createMockPosition(5, 9, false)); // Coluna 9 > 5
+        assertEquals(9, ship.getRightMostPos(), "Error: RightMost should update to 9.");
+    }
+
+    // ==========================================
+    // buildShip() - CC: 6 (Testar o switch todo)
+    // ==========================================
+
+    @Test
+    @DisplayName("buildShip1: Path 1 - Constrói uma Barca")
+    void buildShip1() {
+        assertNotNull(Ship.buildShip("barca", Compass.NORTH, new Position(0,0)), "Error: expected Barge not to be null");
+    }
+
+    @Test
+    @DisplayName("buildShip2: Path 2 - Constrói uma Caravela")
+    void buildShip2() {
+        assertNotNull(Ship.buildShip("caravela", Compass.NORTH, new Position(0,0)), "Error: expected Caravel not to be null");
+    }
+
+    @Test
+    @DisplayName("buildShip3: Path 3 - Constrói uma Nau")
+    void buildShip3() {
+        assertNotNull(Ship.buildShip("nau", Compass.NORTH, new Position(0,0)), "Error: expected Carrack not to be null");
+    }
+
+    @Test
+    @DisplayName("buildShip4: Path 4 - Constrói uma Fragata")
+    void buildShip4() {
+        assertNotNull(Ship.buildShip("fragata", Compass.NORTH, new Position(0,0)), "Error: expected Frigate not to be null");
+    }
+
+    @Test
+    @DisplayName("buildShip5: Path 5 - Constrói um Galeão")
+    void buildShip5() {
+        assertNotNull(Ship.buildShip("galeao", Compass.NORTH, new Position(0,0)), "Error: expected Galleon not to be null");
+    }
+
+    @Test
+    @DisplayName("buildShip6: Path 6 - Default branch retorna null para strings inválidas")
+    void buildShip6() {
+        assertNull(Ship.buildShip("submarino", Compass.NORTH, new Position(0,0)), "Error: expected null for unknown category");
+    }
+
+    // ==========================================
+    // tooCloseTo(IShip) - CC: 3
+    // ==========================================
+
+    @Test
+    @DisplayName("tooCloseToShip1: Path 1 - Outro navio sem posições (loop não itera)")
+    void tooCloseToShip1() {
+        Ship emptyShip = new Ship("Ghost", Compass.NORTH, pos1, 0) {};
+        assertFalse(ship.tooCloseTo(emptyShip), "Error: expected false since other ship is empty");
+    }
+
+    @Test
+    @DisplayName("tooCloseToShip2: Path 2 - Navios não estão perto")
+    void tooCloseToShip2() {
+        Ship farShip = new Ship("Far", Compass.NORTH, pos1, 1) {};
+        farShip.getPositions().add(createMockPosition(10, 10, false));
+        assertFalse(ship.tooCloseTo(farShip), "Error: expected false for distant ships");
+    }
+
+    @Test
+    @DisplayName("tooCloseToShip3: Path 3 - Navios estão perto")
+    void tooCloseToShip3() {
+        Ship nearShip = new Ship("Near", Compass.NORTH, pos1, 1) {};
+        nearShip.getPositions().add(createMockPosition(5, 6, false));
+        assertTrue(ship.tooCloseTo(nearShip), "Error: expected true for adjacent ships");
+    }
+
+    // ==========================================
+    // sink() & toString()
+    // ==========================================
+
+    @Test
+    @DisplayName("sink1: Verifica se afunda marcando todas as posições como hit")
+    void sink1() {
+        ship.sink();
+        assertAll("Verifica hit em todas as posições",
+                () -> assertTrue(ship.getPositions().get(0).isHit(), "Error: first pos should be hit"),
+                () -> assertTrue(ship.getPositions().get(1).isHit(), "Error: second pos should be hit")
+        );
+    }
+
+    @Test
+    @DisplayName("toString1: Garante que a formatação não lança erros")
+    void toString1() {
+        assertDoesNotThrow(() -> ship.toString(), "Error: toString shouldn't throw exceptions");
+    }
+
+    // ==========================================
+    // getAdjacentPositions() - CC: 5
+    // ==========================================
+
+    @Test
+    @DisplayName("getAdjacentPositions: Abrange as validações de exclusão de duplicação")
+    void getAdjacentPositions1() {
+        // Usamos instâncias reais de Position apenas aqui para facilitar os testes de adjacência cruzada
+        Ship testShip = new Ship("Test", Compass.NORTH, new Position(5,5), 2) {};
+        testShip.getPositions().add(new Position(5,5));
+        testShip.getPositions().add(new Position(5,6));
+
+        List<IPosition> adjacents = testShip.getAdjacentPositions();
+
+        assertAll("Verifica lista de adjacências gerada",
+                () -> assertFalse(adjacents.isEmpty(), "Error: list should not be empty"),
+                // Não pode conter posições do próprio barco
+                () -> assertFalse(adjacents.contains(new Position(5,5)), "Error: shouldn't contain own pos"),
+                // Deve conter uma posição validamente adjacente
+                () -> assertTrue(adjacents.contains(new Position(4,5)), "Error: should contain adjacent pos")
+        );
+    }
+    // ==========================================
+    // EXCEPTION & ASSERTION TESTS (Os 12% que faltavam!)
+    // ==========================================
+
+    @Test
+    @DisplayName("constructor2: Path 2 - Category null lança NPE")
+    void constructor2() {
+        assertThrows(NullPointerException.class, () -> new Ship(null, Compass.NORTH, pos1, 2) {}, "Error: expected NullPointerException");
+    }
+
+    @Test
+    @DisplayName("constructor3: Path 3 - Bearing null lança NPE")
+    void constructor3() {
+        assertThrows(NullPointerException.class, () -> new Ship("Test", null, pos1, 2) {}, "Error: expected NullPointerException");
+    }
+
+    @Test
+    @DisplayName("constructor4: Path 4 - Position null lança NPE")
+    void constructor4() {
+        assertThrows(NullPointerException.class, () -> new Ship("Test", Compass.NORTH, null, 2) {}, "Error: expected NullPointerException");
+    }
+
+    @Test
+    @DisplayName("buildShip7: Assert shipKind != null")
+    void buildShip7() {
+        assertThrows(AssertionError.class, () -> Ship.buildShip(null, Compass.NORTH, new Position(0,0)), "Error: expected AssertionError");
+    }
+
+    @Test
+    @DisplayName("buildShip8: Assert bearing != null")
+    void buildShip8() {
+        assertThrows(AssertionError.class, () -> Ship.buildShip("barca", null, new Position(0,0)), "Error: expected AssertionError");
+    }
+
+    @Test
+    @DisplayName("buildShip9: Assert pos != null")
+    void buildShip9() {
+        assertThrows(AssertionError.class, () -> Ship.buildShip("barca", Compass.NORTH, null), "Error: expected AssertionError");
+    }
+
+    @Test
+    @DisplayName("occupies4: Assert pos != null")
+    void occupies4() {
+        assertThrows(AssertionError.class, () -> ship.occupies(null), "Error: expected AssertionError");
+    }
+
+    @Test
+    @DisplayName("tooCloseToShip4: Assert other != null")
+    void tooCloseToShip4() {
+        assertThrows(AssertionError.class, () -> ship.tooCloseTo((IShip)null), "Error: expected AssertionError");
+    }
+
+    @Test
+    @DisplayName("tooCloseToPos4: Assert pos != null")
+    void tooCloseToPos4() {
+        assertThrows(AssertionError.class, () -> ship.tooCloseTo((IPosition)null), "Error: expected AssertionError");
+    }
+
+    @Test
+    @DisplayName("shoot4: Assert pos != null")
+    void shoot4() {
+        assertThrows(AssertionError.class, () -> ship.shoot(null), "Error: expected AssertionError");
+    }
+
+    @Test
+    @DisplayName("shoot5: Assert pos.isInside()")
+    void shoot5() {
+        // Criamos uma posição propositadamente fora do tabuleiro
+        IPosition outsidePos = new Position(100, 100) {
+            @Override public boolean isInside() { return false; }
+        };
+        assertThrows(AssertionError.class, () -> ship.shoot(outsidePos), "Error: expected AssertionError for outside position");
+    }
+
+    @Test
+    @DisplayName("getAdjacentPositions2: Garante a cobertura da duplicação de adjacentes no &&")
+    void getAdjacentPositions2() {
+        Ship testShip = new Ship("Test", Compass.NORTH, new Position(5,5), 2) {};
+        // Colocamos duas posições separadas por 1 casa (ex: 5,5 e 5,7)
+        // Ambas terão o (5,6) como posição adjacente. Quando o (5,7) tentar adicionar o (5,6),
+        // a lista já o contém, o que força a condição !adjacentPositions.contains(adj) a ser FALSA.
+        testShip.getPositions().add(new Position(5,5));
+        testShip.getPositions().add(new Position(5,7));
+
+        List<IPosition> adjacents = testShip.getAdjacentPositions();
+
+        assertAll("Verifica lista gerada com interseção",
+                () -> assertFalse(adjacents.isEmpty(), "Error: list should not be empty"),
+                () -> assertTrue(adjacents.contains(new Position(5,6)), "Error: should contain the common adjacent pos")
+        );
+    }
 }

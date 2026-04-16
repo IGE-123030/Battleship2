@@ -182,11 +182,18 @@ graph TD
 
 ---
 
-## 🧪 Testing
-We use high-coverage unit testing to ensure game stability. Run tests using:
-```bash
-mvn test
-```
+## 🧪 Testes e Integração Contínua (CI)
+
+[cite_start]Para garantir a qualidade do código e que as refabricações não introduzem erros, utilizamos JUnit 5/6[cite: 8, 9, 28].
+
+### Automação (Parte B)
+Configurámos um workflow no **GitHub Actions** que executa automaticamente:
+* [cite_start]**Compilação:** Verifica erros de sintaxe em cada Push[cite: 76].
+* [cite_start]**Testes Unitários:** Executa a bateria de testes para validar o comportamento[cite: 76, 110].
+* **Javadoc:** Garante que a documentação técnica está atualizada.
+
+Comando para execução local:
+`mvn test`
 
 > [!TIP]
 > Use the `-Dtest=ClassName` flag to run specific test suites during development.

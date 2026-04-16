@@ -19,7 +19,7 @@ public class Barge extends Ship {
 	 * @param pos     The upper-left position of the barge on the game board.
 	 */
 	public Barge(Compass bearing, IPosition pos) {
-		super("barca", bearing, pos, 1);
+		super("Barca", bearing, pos, 1);
 
 		// Add the single position of the barge to the list of positions
 		getPositions().add(new Position(pos.getRow(), pos.getColumn()));

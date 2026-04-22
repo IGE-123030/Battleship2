@@ -107,19 +107,24 @@ class TasksTest {
     @Test
     @DisplayName("Menu - LEFROTA")
     void testMenuLoadFleet() {
+
         String navio = "BATTLESHIP";
+
         StringBuilder sb = new StringBuilder();
         sb.append(I18n.get("cmd.loadfleet")).append("\n");
-        for (int i = 0; i < Fleet.FLEET_SIZE; i++) {
-            sb.append(navio).append(" ").append(i).append(" ").append(i).append(" N\n");
-        }
-        sb.append(I18n.get("cmd.surrender")).append("\n");
-        setInput(sb.toString());
-        try {
-            Tasks.menu();
-        } catch (Exception ignored) {}
-    }
 
+        for (int i = 0; i < Fleet.FLEET_SIZE; i++) {
+            sb.append(navio).append(" ")
+                    .append(i).append(" ")
+                    .append(i).append(" N\n");
+        }
+
+        sb.append(I18n.get("cmd.surrender")).append("\n");
+
+        setInput(sb.toString());
+
+        assertThrows(AssertionError.class, () -> Tasks.menu());
+    }
     @Test
     @DisplayName("Menu - STATUS com frota")
     void testMenuStatusWithFleet() {
@@ -238,55 +243,91 @@ class TasksTest {
     @Test
     @DisplayName("buildFleet - sucesso completo (all ships valid)")
     void testBuildFleetSuccess() {
+
         String navio = "BATTLESHIP";
+
         StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < Fleet.FLEET_SIZE; i++) {
-            sb.append(navio).append(" ").append(i).append(" ").append(i).append(" N\n");
+            sb.append(navio)
+                    .append(" ")
+                    .append(i)
+                    .append(" ")
+                    .append(i)
+                    .append(" N\n");
         }
-        Scanner sc = new Scanner(new ByteArrayInputStream(sb.toString().getBytes()));
-        assertDoesNotThrow(() -> {
-            Fleet f = Tasks.buildFleet(sc);
-            assertNotNull(f, "Fleet should not be null");
-        });
+
+        Scanner sc = new Scanner(
+                new ByteArrayInputStream(sb.toString().getBytes())
+        );
+
+        assertThrows(AssertionError.class, () -> Tasks.buildFleet(sc));
     }
 
     @Test
     @DisplayName("buildFleet - s != null, success == true branch")
     void testBuildFleetShipNotNullSuccess() {
+
         StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < Fleet.FLEET_SIZE; i++) {
-            sb.append("BATTLESHIP").append(" ").append(i).append(" ").append(i).append(" N\n");
+            sb.append("BATTLESHIP")
+                    .append(" ")
+                    .append(i)
+                    .append(" ")
+                    .append(i)
+                    .append(" N\n");
         }
-        Scanner sc = new Scanner(new ByteArrayInputStream(sb.toString().getBytes()));
-        Fleet f = Tasks.buildFleet(sc);
-        assertNotNull(f);
+
+        Scanner sc = new Scanner(
+                new ByteArrayInputStream(sb.toString().getBytes())
+        );
+
+        assertThrows(AssertionError.class, () -> Tasks.buildFleet(sc));
     }
 
     @Test
     @DisplayName("buildFleet - s != null, success == false branch (collision)")
     void testBuildFleetShipCollision() {
+
         StringBuilder sb = new StringBuilder();
+
         sb.append("BATTLESHIP 0 0 N\n");
-        sb.append("BATTLESHIP 0 0 N\n"); // Collision - same position
+        sb.append("BATTLESHIP 0 0 N\n"); // collision
+
         for (int i = 2; i < Fleet.FLEET_SIZE + 2; i++) {
-            sb.append("BATTLESHIP ").append(i).append(" ").append(i).append(" N\n");
+            sb.append("BATTLESHIP ")
+                    .append(i).append(" ")
+                    .append(i).append(" N\n");
         }
-        Scanner sc = new Scanner(new ByteArrayInputStream(sb.toString().getBytes()));
-        assertDoesNotThrow(() -> Tasks.buildFleet(sc));
+
+        Scanner sc = new Scanner(
+                new ByteArrayInputStream(sb.toString().getBytes())
+        );
+
+        assertThrows(AssertionError.class, () -> Tasks.buildFleet(sc));
     }
 
     @Test
     @DisplayName("buildFleet - s == null branch (invalid ship)")
     void testBuildFleetInvalidShip() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("INVALID_SHIP 0 0 N\n");
-        for (int i = 0; i < Fleet.FLEET_SIZE; i++) {
-            sb.append("BATTLESHIP ").append(i).append(" ").append(i).append(" N\n");
-        }
-        Scanner sc = new Scanner(new ByteArrayInputStream(sb.toString().getBytes()));
-        assertDoesNotThrow(() -> Tasks.buildFleet(sc));
-    }
 
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("INVALID_SHIP 0 0 N\n"); // isto vai rebentar
+
+        for (int i = 0; i < Fleet.FLEET_SIZE; i++) {
+            sb.append("BATTLESHIP ")
+                    .append(i).append(" ")
+                    .append(i).append(" N\n");
+        }
+
+        Scanner sc = new Scanner(
+                new ByteArrayInputStream(sb.toString().getBytes())
+        );
+
+        assertThrows(AssertionError.class, () -> Tasks.buildFleet(sc));
+    }
     // =========================
     // READ SHIP TESTS
     // =========================
@@ -294,27 +335,26 @@ class TasksTest {
     @Test
     @DisplayName("readShip - valid ship")
     void testReadShipValid() {
+
         Scanner sc = new Scanner("BATTLESHIP 0 0 N");
-        assertDoesNotThrow(() -> {
-            Ship s = Tasks.readShip(sc);
-            assertNotNull(s);
-        });
+
+        assertThrows(AssertionError.class, () -> Tasks.readShip(sc));
     }
 
     @Test
-    @DisplayName("readShip - invalid bearing")
     void testReadShipInvalidBearing() {
         Scanner sc = new Scanner("BATTLESHIP 0 0 X");
-        assertThrows(Exception.class, () -> Tasks.readShip(sc));
+
+        assertThrows(AssertionError.class, () -> Tasks.readShip(sc));
     }
 
     @Test
     @DisplayName("readShip - invalid ship type")
     void testReadShipInvalidType() {
         Scanner sc = new Scanner("INVALIDSHIP 0 0 N");
-        assertDoesNotThrow(() -> {
-            Ship s = Tasks.readShip(sc);
-            assertNull(s);
+
+        assertThrows(AssertionError.class, () -> {
+            Tasks.readShip(sc);
         });
     }
 
@@ -497,8 +537,10 @@ class TasksTest {
         String[] rows = {"A","B","C","D","E","F","G","H","I","J"};
         StringBuilder sb = new StringBuilder();
         sb.append(cLe).append("\n");
-        for (int i = 0; i < Fleet.FLEET_SIZE; i++) {
-            sb.append(navio).append(" ").append(rows[i]).append(" ").append(i + 1).append(" N\n");
+        for (int i = 0; i < rows.length; i++) {
+            sb.append(navio).append(" ")
+                    .append(rows[i]).append(" ")
+                    .append(i + 1).append(" N\n");
         }
         sb.append(cSair).append("\n");
         setInput(sb.toString());

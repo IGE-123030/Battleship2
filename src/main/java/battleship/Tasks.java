@@ -26,9 +26,9 @@ public class Tasks {
     private static final String SIMULA = "cmd.simulate";
 
     public static void menu() {
-        
+
         // Inicialização da Base de Dados (Código do Mauro)
-        DatabaseManager.setupDatabase(); 
+        DatabaseManager.setupDatabase();
 
         IFleet myFleet = null;
         IGame game = null;
@@ -125,6 +125,7 @@ public class Tasks {
                         BoardGUI.refresh();
 
                         try {
+                            //noinspection BusyWait
                             Thread.sleep(3000);
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
@@ -251,5 +252,7 @@ public class Tasks {
         } else {
             throw new IllegalArgumentException("Formato inválido. Use 'A3' ou 'A 3'.");
         }
+
     }
+
 }

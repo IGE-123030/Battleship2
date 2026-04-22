@@ -24,6 +24,11 @@ public class Game implements IGame
 	 * @param showLegend  if true, displays an explanatory legend of the symbols used
 	 *                    to represent various elements such as ships, misses, hits, etc.
 	 */
+	private static ObjectMapper objectMapper = new ObjectMapper();
+
+	static {
+		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+	}
 	public static void printBoard(IFleet fleet, List<IMove> moves, boolean show_shots, boolean showLegend) {
 
 		assert fleet != null;
@@ -108,9 +113,6 @@ public class Game implements IGame
 		assert shots != null;
 
 		// Serializar os tiros gerados em JSON usando a biblioteca Jackson
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-
 		// 1. Create a simplified list containing only the desired data
 		List<Map<String, Object>> simplifiedShots = new ArrayList<>();
 		for (IPosition shot : shots) {

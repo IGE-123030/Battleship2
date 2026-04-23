@@ -147,7 +147,7 @@ public class FleetTest {
         fleet.addShip(barge2);
         fleet.addShip(caravel);
 
-        List<IShip> barges = fleet.getShipsLike("Barca");
+        List<IShip> barges = fleet.getShipsLike("barca");
         assertEquals(2, barges.size(), "Error: Should find 2 Barca ships");
         assertTrue(barges.contains(barge1), "Error: First barge should be in result");
         assertTrue(barges.contains(barge2), "Error: Second barge should be in result");
@@ -159,7 +159,7 @@ public class FleetTest {
         IShip barge = new Barge(Compass.NORTH, new Position(0, 0));
         fleet.addShip(barge);
 
-        List<IShip> galleons = fleet.getShipsLike("Galeao");
+        List<IShip> galleons = fleet.getShipsLike("galeao");
         assertTrue(galleons.isEmpty(), "Error: Should find no Galeao ships");
     }
 
@@ -171,7 +171,7 @@ public class FleetTest {
 
     @Test
     void testGetShipsLike4_EmptyFleet() {
-        List<IShip> result = fleet.getShipsLike("Barca");
+        List<IShip> result = fleet.getShipsLike("barca");
         assertTrue(result.isEmpty(), "Error: Should return empty list when fleet is empty");
     }
 
@@ -444,7 +444,7 @@ public class FleetTest {
     void testPrintShipsByCategory_Valid() {
         IShip barge = new Barge(Compass.NORTH, new Position(1, 1));
         fleet.addShip(barge);
-        assertDoesNotThrow(() -> fleet.printShipsByCategory("Barca"), "Error: Should not throw exception");
+        assertDoesNotThrow(() -> fleet.printShipsByCategory("barca"), "Error: Should not throw exception");
     }
 
     @Test
@@ -494,11 +494,11 @@ public class FleetTest {
         assertEquals(IFleet.FLEET_SIZE, randomFleet.getShips().size(), "Error: Random fleet should have FLEET_SIZE ships");
 
         // Verify we have various ship types
-        List<IShip> galleons = randomFleet.getShipsLike("Galeao");
-        List<IShip> frigates = randomFleet.getShipsLike("Fragata");
-        List<IShip> carracks = randomFleet.getShipsLike("Nau");
-        List<IShip> caravels = randomFleet.getShipsLike("Caravela");
-        List<IShip> barges = randomFleet.getShipsLike("Barca");
+        List<IShip> galleons = randomFleet.getShipsLike("galeao");
+        List<IShip> frigates = randomFleet.getShipsLike("fragata");
+        List<IShip> carracks = randomFleet.getShipsLike("nau");
+        List<IShip> caravels = randomFleet.getShipsLike("caravela");
+        List<IShip> barges = randomFleet.getShipsLike("barca");
 
         assertEquals(1, galleons.size(), "Error: Should have 1 Galleon");
         assertEquals(1, frigates.size(), "Error: Should have 1 Frigate");

@@ -81,7 +81,7 @@ public class PositionTest {
 	// ==================== randomPosition() - CC = 1 ====================
 	@Test
 	void randomPosition() {
-		Position randomPos = Position.randomPosition();
+		Position randomPos = Position.randomPosition(Game.BOARD_SIZE);
 		assertAll("randomPosition validation",
 			() -> assertNotNull(randomPos, "Error: randomPosition should not return null"),
 			() -> assertTrue(randomPos.isInside(), "Error: random position should be inside board"),

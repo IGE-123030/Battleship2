@@ -1,5 +1,7 @@
 package battleship;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,10 +34,10 @@ public class Position implements IPosition {
 	private boolean isHit;
 
 	//------------------------------------------------------------------
-	public static Position randomPosition() {
+	public static Position randomPosition(int boardSize) {
 		// Generate random position on the board
-		int row = (int) (Math.random() * Game.BOARD_SIZE);
-		int col = (int) (Math.random() * Game.BOARD_SIZE);
+		int row = (int) (Math.random() * boardSize);
+		int col = (int) (Math.random() * boardSize);
 		return new Position(row, col);
 	}
 	/**
@@ -92,7 +94,7 @@ public class Position implements IPosition {
 	 * @return the traditional row within [A-J]
 	 */
 	public char getClassicRow() {
-		return (char) ('A' + row);
+            return rowToChar();
 	}
 
 	/**
@@ -139,20 +141,8 @@ public class Position implements IPosition {
 		int row = this.getRow();
 		int col = this.getColumn();
 
-		// Define possible directions (up, right, down, left)
-		int[][] directions = {
-				{-1, 0},  // north
-				{0, 1},   // east
-				{1, 0},   // south
-				{0, -1},   // west
-				{1, 1},   // northeast
-				{1, -1},  // northwest
-				{-1, 1},  // southeast
-				{-1, -1} // southwest
-		};
-
-		// Check each possible direction
-		for (int[] dir : directions) {
+        // Check each possible direction
+		for (int[] dir : getDirections()) {
 			Position newPosition = new Position(row + dir[0], col + dir[1]);
 			// Only add the position if it's inside the board boundaries
 			if (newPosition.isInside()) {
@@ -163,7 +153,21 @@ public class Position implements IPosition {
 		return adjacents;
 	}
 
-	/**
+    private int[] @NotNull [] getDirections() {
+        int[][] directions = {
+                {-1, 0},  // north
+                {0, 1},   // east
+                {1, 0},   // south
+                {0, -1},   // west
+                {1, 1},   // northeast
+                {1, -1},  // northwest
+                {-1, 1},  // southeast
+                {-1, -1} // southwest
+        };
+        return directions;
+    }
+
+    /**
 	 * Checks if this position is occupied by a ship.
 	 *
 	 * @return true if the position is occupied, false otherwise
@@ -236,7 +240,14 @@ public class Position implements IPosition {
 	 */
 	@Override
 	public String toString() {
-		return (char) ('A' + row) + "" + (column + 1);
-//		return "Row = " + (char) ('A' + row) + ", Column = " + (column + 1);
+		return rowToChar(this.row) + "" + (column + 1);
+//		return "Row = " + rowToChar(this.row) + ", Column = " + (column + 1);
 	}
+
+    private char rowToChar(int row) {
+        return (char) ('A' + row);
+    }
+    private char rowToChar() {
+        return rowToChar(this.row);
+    }
 }

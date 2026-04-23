@@ -51,25 +51,13 @@ public abstract class Ship implements IShip
 		assert pos != null;
 
         Ship s;
-        switch (shipKind)
-        {
-        case BARCA:
-            s = new Barge(bearing, pos);
-			break;
-        case CARAVELA:
-            s = new Caravel(bearing, pos);
-			break;
-        case NAU:
-            s = new Carrack(bearing, pos);
-			break;
-        case FRAGATA:
-            s = new Frigate(bearing, pos);
-			break;
-        case GALEAO:
-            s = new Galleon(bearing, pos);
-			break;
-        default:
-            s = null;
+        switch (shipKind) {
+            case BARCA -> s = new Barge(bearing, pos);
+            case CARAVELA -> s = new Caravel(bearing, pos);
+            case NAU -> s = new Carrack(bearing, pos);
+            case FRAGATA -> s = new Frigate(bearing, pos);
+            case GALEAO -> s = new Galleon(bearing, pos);
+            default -> s = null;
         }
         return s;
     }

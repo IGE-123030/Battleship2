@@ -16,3 +16,13 @@
 | Game | Large Class | Extract Class | 94255 |
 | Game | Inappropriate Intimacy | Move Method | 94255 |
 | Game::fireSingleShot | Overly Complex Method | Decompose Conditional | 94255 |
+| `battleship.Tasks::menu` | Long Method | Extract Method | 122983|
+| `battleship.Tasks::menu` | Switch Statements | Replace with Enhanced Switch | 122983 |
+| `battleship.Tasks::readClassicPosition` | Long Method | Extract Method | 122983 |
+| `battleship.Tasks` | Duplicate Code | Extract Method | 122983 |
+| `battleship.Tasks` | Speculative Generality (Código morto/comentado) | Remove Dead Code | 122983 |
+| `battleship.Tasks` | Information Exposure (System.out em lógica) | Extract Method | 122983 |
+| `battleship.Position::randomPosition` | Feature Envy (Dependência excessiva de `Game.BOARD_SIZE`) | Move Method / Parameterize Method | 122983 |
+| `battleship.Position` | Duplicate Code (Lógica de conversão 'A' + row repetida) | Extract Method (Ex: `rowToChar`) | 122983 |
+| `battleship.Position::adjacentPositions` | Long Method (Inicialização manual de matriz de direções) | Extract Method / Replace Temp with Query | 122983 |
+

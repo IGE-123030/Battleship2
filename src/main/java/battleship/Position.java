@@ -34,10 +34,10 @@ public class Position implements IPosition {
 	private boolean isHit;
 
 	//------------------------------------------------------------------
-	public static Position randomPosition() {
+	public static Position randomPosition(int boardSize) {
 		// Generate random position on the board
-		int row = (int) (Math.random() * Game.BOARD_SIZE);
-		int col = (int) (Math.random() * Game.BOARD_SIZE);
+		int row = (int) (Math.random() * boardSize);
+		int col = (int) (Math.random() * boardSize);
 		return new Position(row, col);
 	}
 	/**

@@ -37,7 +37,7 @@ public class Fleet implements IFleet {
         while (fleetSize < shipTypes.length) {
 
             // Build the ship
-            Ship ship = Ship.buildShip(shipTypes[fleetSize], Compass.randomBearing(), Position.randomPosition());
+            Ship ship = Ship.buildShip(shipTypes[fleetSize], Compass.randomBearing(), Position.randomPosition(Game.BOARD_SIZE));
 
             // Attempt to add the ship to the fleet
             if (ship != null && randomFleet.addShip(ship)) {

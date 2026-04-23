@@ -147,7 +147,7 @@ public class FleetTest {
         fleet.addShip(barge2);
         fleet.addShip(caravel);
 
-        List<IShip> barges = fleet.getShipsLike("barca");
+        List<IShip> barges = fleet.getShipsLike("Barca");
         assertEquals(2, barges.size(), "Error: Should find 2 Barca ships");
         assertTrue(barges.contains(barge1), "Error: First barge should be in result");
         assertTrue(barges.contains(barge2), "Error: Second barge should be in result");
@@ -493,12 +493,12 @@ public class FleetTest {
         IFleet randomFleet = Fleet.createRandom();
         assertEquals(IFleet.FLEET_SIZE, randomFleet.getShips().size(), "Error: Random fleet should have FLEET_SIZE ships");
 
-        // Verify we have various ship types
+        // Verify we have various ship types (use exact capitalization from ship classes)
         List<IShip> galleons = randomFleet.getShipsLike("galeao");
         List<IShip> frigates = randomFleet.getShipsLike("fragata");
-        List<IShip> carracks = randomFleet.getShipsLike("nau");
-        List<IShip> caravels = randomFleet.getShipsLike("caravela");
-        List<IShip> barges = randomFleet.getShipsLike("barca");
+        List<IShip> carracks = randomFleet.getShipsLike("Nau");
+        List<IShip> caravels = randomFleet.getShipsLike("Caravela");
+        List<IShip> barges = randomFleet.getShipsLike("Barca");
 
         assertEquals(1, galleons.size(), "Error: Should have 1 Galleon");
         assertEquals(1, frigates.size(), "Error: Should have 1 Frigate");

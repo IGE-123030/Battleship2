@@ -92,7 +92,7 @@ public class Position implements IPosition {
 	 * @return the traditional row within [A-J]
 	 */
 	public char getClassicRow() {
-		return (char) ('A' + row);
+            return rowToChar();
 	}
 
 	/**
@@ -236,7 +236,14 @@ public class Position implements IPosition {
 	 */
 	@Override
 	public String toString() {
-		return (char) ('A' + row) + "" + (column + 1);
-//		return "Row = " + (char) ('A' + row) + ", Column = " + (column + 1);
+		return rowToChar(this.row) + "" + (column + 1);
+//		return "Row = " + rowToChar(this.row) + ", Column = " + (column + 1);
 	}
+
+    private char rowToChar(int row) {
+        return (char) ('A' + row);
+    }
+    private char rowToChar() {
+        return rowToChar(this.row);
+    }
 }

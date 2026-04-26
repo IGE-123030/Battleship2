@@ -360,30 +360,26 @@ public class Game implements IGame
 	 *         valid, repeated, a hit, and whether a ship was sunk.
 	 */
 	public ShotResult fireSingleShot(IPosition pos, boolean isRepeated) {
-
 		assert pos != null;
 
+		// 1. Validar se a posição está dentro do tabuleiro
 		if (!pos.isInside()) {
 			countInvalidShots++;
 			return new ShotResult(false, false, null, false);
 		}
 
-		if (isRepeated || repeatedShot(pos)) {
+		// 2. REFATORAÇÃO: Verificar se o tiro é repetido
+		if (isShotAlreadyMade(pos, isRepeated)) {
 			countRepeatedShots++;
 			return new ShotResult(true, true, null, false);
 		}
 
+		// 3. REFATORAÇÃO: Processar o alvo (água ou navio)
 		IShip ship = myFleet.shipAt(pos);
-		if (ship == null)
+		if (ship == null) {
 			return new ShotResult(true, false, null, false);
-		else
-		{
-			ship.shoot(pos);
-			countHits++;
-			if (!ship.stillFloating()) {
-				countSinks++;
-			}
-			return new ShotResult(true, false, ship, !ship.stillFloating());
+		} else {
+			return handleShipHit(ship, pos);
 		}
 	}
 
@@ -461,5 +457,16 @@ public class Game implements IGame
 			Scanner singleScanner = new Scanner(token);
 			shots.add(Tasks.readClassicPosition(singleScanner));
 		}
+	}
+	private boolean isShotAlreadyMade(IPosition pos, boolean isRepeated) {
+		return isRepeated || repeatedShot(pos);
+	}
+	private ShotResult handleShipHit(IShip ship, IPosition pos) {
+		ship.shoot(pos);
+		countHits++;
+		if (!ship.stillFloating()) {
+			countSinks++;
+		}
+		return new ShotResult(true, false, ship, !ship.stillFloating());
 	}
 }

@@ -88,16 +88,12 @@ public class Game implements IGame
 			System.out.print("--");
 		System.out.println("-+");
 
-		extracted(showLegend);
-		System.out.println();
-	}
-
-	private static void extracted(boolean showLegend) {
 		if (showLegend) {
 			System.out.println("          " + I18n.get("board.legend"));
 			System.out.println("'" + SHIP_MARKER + "'->" + I18n.get("board.marker.ship") + ", '" + SHIP_ADJACENT_MARKER + "'->" + I18n.get("board.marker.adjacent") + ", '" + EMPTY_MARKER + "'->" + I18n.get("board.marker.water"));
 			System.out.println("'" + SHOT_SHIP_MARKER + "'->" + I18n.get("board.marker.hit") + ", '" + SHOT_WATER_MARKER + "'->" + I18n.get("board.marker.miss"));
 		}
+		System.out.println();
 	}
 
 	/**
@@ -270,44 +266,31 @@ public class Game implements IGame
 	 *                                  incorrectly formatted, or do not match the
 	 *                                  required number of shots (NUMBER_SHOTS).
 	 */
+	/**
+	 * Reads and processes the enemy fire input from the specified scanner.
+	 * [Refactored: Extract Method applied to token processing]
+	 */
 	public String readEnemyFire(Scanner in) {
-
 		assert in != null;
 
+		// Lógica de leitura do input (mantida para o funcionamento do relógio)
+		String input = "";
+		while (in.hasNext()) {
+			input += in.next() + " ";
+		}
+		input = input.trim();
 
-    //mudanças para o relogio funcionar
-        String input = "";
-        while (in.hasNext()) {
-            input += in.next() + " ";
-        }
-        input = input.trim();
-
-
-		// Criar lista para armazenar os tiros
 		List<IPosition> shots = new ArrayList<>();
-
 		Scanner inputScanner = new Scanner(input);
-		while (shots.size() < NUMBER_SHOTS && inputScanner.hasNext()) {
-			// Lê a próxima parte e constrói uma posição
-			String token = inputScanner.next();
 
-			if (token.matches("[A-Za-z]")) {
-				// Caso seja somente uma coluna ("A", "B", etc.), esperar o próximo número
-				if (inputScanner.hasNextInt()) {
-					int row = inputScanner.nextInt();
-					shots.add(new Position(token.toUpperCase().charAt(0), row));
-				} else {
-					throw new IllegalArgumentException(I18n.get("error.incomplete_pos", token));
-				}
-			} else {
-				// Caso o token já contenha a coluna e a linha juntas (ex.: "A3")
-				Scanner singleScanner = new Scanner(token);
-				shots.add(Tasks.readClassicPosition(singleScanner));
-			}
+		// O loop agora é muito mais limpo e legível! 🧹
+		while (shots.size() < NUMBER_SHOTS && inputScanner.hasNext()) {
+			// Chamada ao método extraído que resolve o smell "Long Method"
+			processShotToken(inputScanner, shots);
 		}
 
 		if (shots.size() != NUMBER_SHOTS) {
-			throw new IllegalArgumentException(I18n.get("error.must_fire_n", NUMBER_SHOTS));
+			throw new IllegalArgumentException(util.I18n.get("error.must_fire_n", NUMBER_SHOTS));
 		}
 
 		this.fireShots(shots);
@@ -460,5 +443,23 @@ public class Game implements IGame
 			System.out.println("+--------------------------------------------------------------+");
 			System.out.printf("| %-60s |\n", I18n.get("msg.game_over_pirate"));
 			System.out.println("+--------------------------------------------------------------+");
+	}
+	// REFATORAÇÃO: Extract Method para resolver o Long Method em readEnemyFire
+	private void processShotToken(Scanner inputScanner, List<IPosition> shots) {
+		String token = inputScanner.next();
+
+		if (token.matches("[A-Za-z]")) {
+			// Caso seja somente uma coluna ("A", "B", etc.), esperar o próximo número
+			if (inputScanner.hasNextInt()) {
+				int row = inputScanner.nextInt();
+				shots.add(new Position(token.toUpperCase().charAt(0), row));
+			} else {
+				throw new IllegalArgumentException(util.I18n.get("error.incomplete_pos", token));
+			}
+		} else {
+			// Caso o token já contenha a coluna e a linha juntas (ex.: "A3")
+			Scanner singleScanner = new Scanner(token);
+			shots.add(Tasks.readClassicPosition(singleScanner));
+		}
 	}
 }

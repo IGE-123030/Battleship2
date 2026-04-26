@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -531,34 +532,7 @@ public class GameTest {
 		assertEquals(hitsAntes + 1, game.getHits(), "O contador de hits deve ter subido");
 		assertEquals(0, game.getSunkShips(), "O navio não deve ter afundado ainda");
 	}
-	@Test
-	void testJsonShotsCatchCoverage() throws Exception {
 
-		// Mapper falso que falha sempre
-		ObjectMapper fakeMapper = new ObjectMapper() {
-			@Override
-			public String writeValueAsString(Object value) throws JsonProcessingException {
-				throw new JsonProcessingException("Erro forçado") {};
-			}
-		};
-
-		// Aceder ao campo privado static objectMapper
-		java.lang.reflect.Field field = Game.class.getDeclaredField("objectMapper");
-		field.setAccessible(true);
-
-		// Guardar original
-		Object original = field.get(null);
-
-		// Injetar falso
-		field.set(null, fakeMapper);
-
-		List<IPosition> shots = List.of(new Position(0, 0));
-
-		assertThrows(RuntimeException.class, () -> Game.jsonShots(shots));
-
-		// Restaurar original
-		field.set(null, original);
-	}
 	@Test
 	void testRandomEnemyFireElseBranchGuaranteed() {
 		Game g = new Game(new Fleet());
@@ -585,6 +559,66 @@ public class GameTest {
 		IGame.ShotResult r = game.fireSingleShot(fresh, false);
 
 		assertFalse(r.repeated());
+	}
+	@Test
+	void testJsonShotsForcingSerializationError() throws Exception {
+		// Usamos reflexão para aceder ao campo privado 'objectMapper'
+		java.lang.reflect.Field field = Game.class.getDeclaredField("objectMapper");
+		field.setAccessible(true);
+
+		// Guardamos o original para repor depois
+		ObjectMapper original = (ObjectMapper) field.get(null);
+
+		// Criamos um ObjectMapper "estragado" que falha em qualquer escrita
+		ObjectMapper faultyMapper = new ObjectMapper();
+		faultyMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, true);
+		// Ou simplesmente um que lança erro ao ver um Map específico
+
+		try {
+			// Passar algo que quebre a serialização ou forçar o erro
+			List<IPosition> shots = List.of(new Position(1,1));
+			// Se mudares o mapper para null temporariamente, o catch(Exception e) apanha!
+			field.set(null, null);
+
+			assertThrows(RuntimeException.class, () -> Game.jsonShots(shots));
+		} finally {
+			// MUITO IMPORTANTE: Repor o original para não estragar os outros testes
+			field.set(null, original);
+		}
+	}
+	@Test
+	void testJsonShotsFullCoverage() throws Exception {
+		// 1. Aceder ao campo privado static objectMapper
+		java.lang.reflect.Field field = Game.class.getDeclaredField("objectMapper");
+		field.setAccessible(true);
+
+		// 2. Guardar o original para repor no fim
+		ObjectMapper originalMapper = (ObjectMapper) field.get(null);
+
+		// 3. Criar um "Spy" ou Mock manual que lança erro
+		// Vamos usar um ObjectMapper que falha ao serializar qualquer coisa
+		ObjectMapper spyMapper = new ObjectMapper() {
+			@Override
+			public String writeValueAsString(Object value) throws JsonProcessingException {
+				// Forçamos a exceção específica que o teu catch espera
+				throw new com.fasterxml.jackson.core.JsonGenerationException("Forced Error", (com.fasterxml.jackson.core.JsonGenerator) null);
+			}
+		};
+
+		try {
+			// Injetar o mapper "estragado" no Game
+			field.set(null, spyMapper);
+
+			// Criar uma lista válida para passar o primeiro loop
+			List<IPosition> validShots = List.of(new Position(1, 1));
+
+			// Executar - Isto TEM de entrar no catch e executar o throw RuntimeException
+			assertThrows(RuntimeException.class, () -> Game.jsonShots(validShots));
+
+		} finally {
+			// 4. REPOR O ORIGINAL (Crítico para os outros testes passarem)
+			field.set(null, originalMapper);
+		}
 	}
 
 

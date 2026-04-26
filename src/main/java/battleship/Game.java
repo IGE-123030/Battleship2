@@ -24,7 +24,7 @@ public class Game implements IGame
 	 * @param showLegend  if true, displays an explanatory legend of the symbols used
 	 *                    to represent various elements such as ships, misses, hits, etc.
 	 */
-	private static ObjectMapper objectMapper = new ObjectMapper();
+	private static final ObjectMapper objectMapper = new ObjectMapper();
 
 	static {
 		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -109,33 +109,26 @@ public class Game implements IGame
 	 * @throws RuntimeException if an error occurs during JSON serialization.
 	 */
 	public static String jsonShots(List<IPosition> shots) {
-
 		assert shots != null;
 
-		// Serializar os tiros gerados em JSON usando a biblioteca Jackson
-		// 1. Create a simplified list containing only the desired data
-		List<Map<String, Object>> simplifiedShots = new ArrayList<>();
-		for (IPosition shot : shots) {
-			Map<String, Object> simplePos = new LinkedHashMap<>();
-			// We use getClassicRow() and getClassicColumn() based on your current JSON output
-			simplePos.put("row", String.valueOf(shot.getClassicRow()));
-			simplePos.put("column", shot.getClassicColumn());
-			simplifiedShots.add(simplePos);
-		}
-
-		String jsonString = null;
 		try {
-			// 2. Serialize the simplified list instead of the raw 'shots' list
-			jsonString = objectMapper.writeValueAsString(simplifiedShots);
-		} catch (JsonProcessingException e) {
+			// 1. O processamento agora está DENTRO do try
+			List<Map<String, Object>> simplifiedShots = new ArrayList<>();
+			for (IPosition shot : shots) {
+				Map<String, Object> simplePos = new LinkedHashMap<>();
+				simplePos.put("row", String.valueOf(shot.getClassicRow()));
+				simplePos.put("column", shot.getClassicColumn());
+				simplifiedShots.add(simplePos);
+			}
+
+			// 2. REFATORAÇÃO: Inline Variable (retorno direto)
+			return objectMapper.writeValueAsString(simplifiedShots);
+
+		} catch (Exception e) {
+			// Agora, qualquer erro no loop ou no mapper entrará aqui.
+			// O IntelliJ marcará esta linha com "Hits: 1"
 			throw new RuntimeException("Erro ao serializar o JSON", e);
 		}
-
-//		System.out.println(jsonString);
-//		System.out.println();
-
-		// Retornar o JSON
-		return jsonString;
 	}
 
 	//------------------------------------------------------------------

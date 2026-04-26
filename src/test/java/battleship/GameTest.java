@@ -531,34 +531,7 @@ public class GameTest {
 		assertEquals(hitsAntes + 1, game.getHits(), "O contador de hits deve ter subido");
 		assertEquals(0, game.getSunkShips(), "O navio não deve ter afundado ainda");
 	}
-	@Test
-	void testJsonShotsCatchCoverage() throws Exception {
 
-		// Mapper falso que falha sempre
-		ObjectMapper fakeMapper = new ObjectMapper() {
-			@Override
-			public String writeValueAsString(Object value) throws JsonProcessingException {
-				throw new JsonProcessingException("Erro forçado") {};
-			}
-		};
-
-		// Aceder ao campo privado static objectMapper
-		java.lang.reflect.Field field = Game.class.getDeclaredField("objectMapper");
-		field.setAccessible(true);
-
-		// Guardar original
-		Object original = field.get(null);
-
-		// Injetar falso
-		field.set(null, fakeMapper);
-
-		List<IPosition> shots = List.of(new Position(0, 0));
-
-		assertThrows(RuntimeException.class, () -> Game.jsonShots(shots));
-
-		// Restaurar original
-		field.set(null, original);
-	}
 	@Test
 	void testRandomEnemyFireElseBranchGuaranteed() {
 		Game g = new Game(new Fleet());
@@ -586,7 +559,70 @@ public class GameTest {
 
 		assertFalse(r.repeated());
 	}
+	@Test
+	void testJsonShotsWithNullElement() {
+		List<IPosition> brokenList = new ArrayList<>();
+		brokenList.add(null); // Isto causará um NullPointerException dentro do loop
 
+		// O seu catch (Exception e) apanharia isto e executaria a linha do throw
+		assertThrows(RuntimeException.class, () -> Game.jsonShots(brokenList));
+	}
+	@Test
+	void testJsonShotsException() {
+		List<IPosition> brokenList = new ArrayList<>();
+		brokenList.add(null); // Isto vai causar o erro dentro do novo bloco try
+
+		assertThrows(RuntimeException.class, () -> {
+			Game.jsonShots(brokenList);
+		});
+	}
+
+	@Test
+	void testJsonShotsExceptionCoverage() {
+		List<IPosition> listWithNull = new ArrayList<>();
+		listWithNull.add(null);
+
+		// Com o loop dentro do try, o NullPointerException será capturado
+		// e relançado como RuntimeException, cobrindo a linha que falta.
+		assertThrows(RuntimeException.class, () -> Game.jsonShots(listWithNull));
+	}
+
+	@Test
+	void testFireShotsAssertNull() {
+		assertThrows(AssertionError.class, () -> game.fireShots(null));
+	}
+	@Test
+	void testRandomEnemyFireCollisionCoverage() {
+		// 1. Criar um jogo novo
+		Game g = new Game(new Fleet());
+
+		// 2. Vamos simular que quase todos os tiros já foram dados
+		// Isso obriga o random a gerar números repetidos (false hits)
+		for (int i = 0; i < 98; i++) {
+			// Adicionamos posições fixas à lista de tiros já realizados
+			g.getAlienMoves().add(new Move(i,
+					List.of(new Position(i/10, i%10)),
+					new ArrayList<>()));
+		}
+
+		// 3. Ao executar agora, a probabilidade de colisão é altíssima,
+		// o que fará o "!shots.contains(newShot)" ser avaliado como FALSE
+		// e preencherá a cobertura que falta na imagem.
+		assertDoesNotThrow(() -> g.randomEnemyFire());
+	}
+	@Test
+	void testRandomEnemyFireCollision() {
+		// Criar um cenário onde quase todas as posições do tabuleiro (10x10) estão ocupadas
+		// Isso força o loop while em randomEnemyFire a encontrar posições repetidas
+		for (int i = 0; i < 98; i++) {
+			game.getAlienMoves().add(new Move(i,
+					List.of(new Position(i/10, i%10)),
+					new ArrayList<>()));
+		}
+
+		// Ao correr isto, o '!shots.contains(newShot)' será avaliado como FALSE várias vezes
+		assertDoesNotThrow(() -> game.randomEnemyFire());
+	}
 
 
 

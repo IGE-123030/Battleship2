@@ -88,12 +88,16 @@ public class Game implements IGame
 			System.out.print("--");
 		System.out.println("-+");
 
+		extracted(showLegend);
+		System.out.println();
+	}
+
+	private static void extracted(boolean showLegend) {
 		if (showLegend) {
 			System.out.println("          " + I18n.get("board.legend"));
 			System.out.println("'" + SHIP_MARKER + "'->" + I18n.get("board.marker.ship") + ", '" + SHIP_ADJACENT_MARKER + "'->" + I18n.get("board.marker.adjacent") + ", '" + EMPTY_MARKER + "'->" + I18n.get("board.marker.water"));
 			System.out.println("'" + SHOT_SHIP_MARKER + "'->" + I18n.get("board.marker.hit") + ", '" + SHOT_WATER_MARKER + "'->" + I18n.get("board.marker.miss"));
 		}
-		System.out.println();
 	}
 
 	/**

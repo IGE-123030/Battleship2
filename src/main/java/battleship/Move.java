@@ -66,15 +66,12 @@ public class Move implements IMove {
      */
     @Override
     public String processEnemyFire(boolean verbose) {
-
-        // Rever se toda a lógica está correta
+        Map<String, Integer> sunkBoatsCount = new HashMap<>(); // Rastrear quantos navios de cada tipo afundaram
+        Map<String, Integer> hitsPerBoat = new HashMap<>();
 
         int validShots = 0;
         int repeatedShots = 0;
         int missedShots = 0;
-
-        Map<String, Integer> sunkBoatsCount = new HashMap<>(); // Rastrear quantos navios de cada tipo afundaram
-        Map<String, Integer> hitsPerBoat = new HashMap<>();
 
         // Processar cada resultado de tiro
         for (IGame.ShotResult result : this.shotResults) {
@@ -152,6 +149,10 @@ public class Move implements IMove {
         }
 
         // Criar o mapa para o JSON
+        return generateJSONResponse(validShots, outsideShots, repeatedShots, missedShots, sunkBoatsCount, hitsPerBoat);
+    }
+
+    private static String generateJSONResponse(int validShots, int outsideShots, int repeatedShots, int missedShots, Map<String, Integer> sunkBoatsCount, Map<String, Integer> hitsPerBoat) {
         Map<String, Object> response = new HashMap<>();
         response.put("validShots", validShots);
         response.put("outsideShots", outsideShots);

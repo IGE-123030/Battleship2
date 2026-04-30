@@ -168,8 +168,26 @@ public class Tasks {
         relogio.stop();
 
         long tempo = relogio.getTime() / 1000;
-        System.out.println(I18n.get("msg.time_spent", tempo));
+        printTimeSpent(tempo);
 
+        processFire(game, myFleet, coords);
+
+        return gameOver(game);
+    }
+
+    private static void printTimeSpent(long tempo) {
+        System.out.println(I18n.get("msg.time_spent", tempo));
+    }
+
+    private static boolean gameOver(IGame game) {
+        if (game.getRemainingShips() == 0) {
+            game.over();
+            return true;
+        }
+        return false;
+    }
+
+    private static void processFire(IGame game, IFleet myFleet, String coords) {
         Scanner coordsScanner = new Scanner(coords);
         game.readEnemyFire(coordsScanner);
 
@@ -177,12 +195,6 @@ public class Tasks {
         game.printMyBoard(true, false);
 
         BoardGUI.refresh();
-
-        if (game.getRemainingShips() == 0) {
-            game.over();
-            return true;
-        }
-        return false;
     }
 
     public static void menuHelp() {

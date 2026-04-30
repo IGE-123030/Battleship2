@@ -45,12 +45,12 @@ public class Move implements IMove {
 
     @Override
     public List<IPosition> getShots() {
-        return this.shots;
+        return Collections.unmodifiableList(this.shots);
     }
 
     @Override
     public List<IGame.ShotResult> getShotResults() {
-        return this.shotResults;
+        return Collections.unmodifiableList(this.shotResults);
     }
 
     /**
@@ -101,59 +101,55 @@ public class Move implements IMove {
 
         if (verbose) {
             // Construção da mensagem de saída
-            printVerboseOutput(validShots, repeatedShots, sunkBoatsCount, hitsPerBoat, missedShots, outsideShots);
+            List<String> parts = new ArrayList<>();
+
+            if (validShots == 0 && repeatedShots > 0) {
+                parts.add(I18n.get("move.shots.repeated", repeatedShots));
+            } else {
+                if (validShots > 0) {
+                    String validText = I18n.get("move.shots.valid", validShots) + ": ";
+
+                    List<String> details = new ArrayList<>();
+
+                    // Barcos ao fundo
+                    for (Map.Entry<String, Integer> entry : sunkBoatsCount.entrySet()) {
+                        String name = I18n.get("ship." + entry.getKey());
+                        details.add(I18n.get("move.ship.sunk", entry.getValue(), name));
+                    }
+
+                    // Tiros em barcos
+                    for (Map.Entry<String, Integer> entry : hitsPerBoat.entrySet()) {
+                        if (!sunkBoatsCount.containsKey(entry.getKey())) {
+                            String name = I18n.get("ship." + entry.getKey());
+                            details.add(I18n.get("move.ship.hit", entry.getValue(), name));
+                        }
+                    }
+
+                    // Tiros na água
+                    if (missedShots > 0) {
+                        details.add(I18n.get("move.shots.water", missedShots));
+                    }
+
+                    parts.add(validText + String.join(" + ", details));
+                }
+
+                if (repeatedShots > 0) {
+                    parts.add(I18n.get("move.shots.repeated", repeatedShots));
+                }
+
+            }
+
+            // Adicionar contagem de tiros fora do tabuleiro
+            if (outsideShots > 0) {
+                parts.add(I18n.get("move.shots.outside", outsideShots));
+            }
+
+            String finalOutput = String.join(", ", parts);
+            System.out.println(I18n.get("move.summary", this.number, finalOutput));
         }
 
         // Criar o mapa para o JSON
         return generateJSONResponse(validShots, outsideShots, repeatedShots, missedShots, sunkBoatsCount, hitsPerBoat);
-    }
-
-    private void printVerboseOutput(int validShots, int repeatedShots, Map<String, Integer> sunkBoatsCount, Map<String, Integer> hitsPerBoat, int missedShots, int outsideShots) {
-        List<String> parts = new ArrayList<>();
-
-        if (validShots == 0 && repeatedShots > 0) {
-            parts.add(I18n.get("move.shots.repeated", repeatedShots));
-        } else {
-            if (validShots > 0) {
-                String validText = I18n.get("move.shots.valid", validShots) + ": ";
-
-                List<String> details = new ArrayList<>();
-
-                // Barcos ao fundo
-                for (Map.Entry<String, Integer> entry : sunkBoatsCount.entrySet()) {
-                    String name = I18n.get("ship." + entry.getKey());
-                    details.add(I18n.get("move.ship.sunk", entry.getValue(), name));
-                }
-
-                // Tiros em barcos
-                for (Map.Entry<String, Integer> entry : hitsPerBoat.entrySet()) {
-                    if (!sunkBoatsCount.containsKey(entry.getKey())) {
-                        String name = I18n.get("ship." + entry.getKey());
-                        details.add(I18n.get("move.ship.hit", entry.getValue(), name));
-                    }
-                }
-
-                // Tiros na água
-                if (missedShots > 0) {
-                    details.add(I18n.get("move.shots.water", missedShots));
-                }
-
-                parts.add(validText + String.join(" + ", details));
-            }
-
-            if (repeatedShots > 0) {
-                parts.add(I18n.get("move.shots.repeated", repeatedShots));
-            }
-
-        }
-
-        // Adicionar contagem de tiros fora do tabuleiro
-        if (outsideShots > 0) {
-            parts.add(I18n.get("move.shots.outside", outsideShots));
-        }
-
-        String finalOutput = String.join(", ", parts);
-        System.out.println(I18n.get("move.summary", this.number, finalOutput));
     }
 
     private static String generateJSONResponse(int validShots, int outsideShots, int repeatedShots, int missedShots, Map<String, Integer> sunkBoatsCount, Map<String, Integer> hitsPerBoat) {

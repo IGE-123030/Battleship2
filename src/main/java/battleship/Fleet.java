@@ -3,10 +3,12 @@
  */
 package battleship;
 
+import org.jetbrains.annotations.NotNull;
 import util.I18n;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The type Fleet.
@@ -24,13 +26,7 @@ public class Fleet implements IFleet {
         Fleet randomFleet = new Fleet();
 
         // Define the types of ships to be added
-        String[] shipTypes = {
-                "galeao",                           // 1 galleon
-                "fragata",                           // 1 frigate
-                "nau", "nau",                        // 2 carracks
-                "caravela", "caravela", "caravela",  // 3 caravels
-                "barca", "barca", "barca", "barca"   // 4 barges
-        };
+        String[] shipTypes = getStrings();
 
         int fleetSize = 0;
 
@@ -45,6 +41,17 @@ public class Fleet implements IFleet {
             }
         }
         return randomFleet;
+    }
+
+    private static String @NotNull [] getStrings() {
+        String[] shipTypes = {
+                "galeao",                           // 1 galleon
+                "fragata",                           // 1 frigate
+                "nau", "nau",                        // 2 carracks
+                "caravela", "caravela", "caravela",  // 3 caravels
+                "barca", "barca", "barca", "barca"   // 4 barges
+        };
+        return shipTypes;
     }
 
 
@@ -132,12 +139,9 @@ public class Fleet implements IFleet {
      */
     @Override
     public List<IShip> getFloatingShips() {
-        List<IShip> floatingShips = new ArrayList<IShip>();
-        for (IShip s : ships)
-            if (s.stillFloating())
-                floatingShips.add(s);
-
-        return floatingShips;
+        return ships.stream()
+                .filter(IShip::stillFloating)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -152,12 +156,9 @@ public class Fleet implements IFleet {
      */
     @Override
     public List<IShip> getSunkShips() {
-        List<IShip> sunkShips = new ArrayList<IShip>();
-        for (IShip s : ships)
-            if (!s.stillFloating())
-                sunkShips.add(s);
-
-        return sunkShips;
+        return ships.stream()
+                .filter(ship -> !ship.stillFloating())
+                .collect(Collectors.toList());
     }
 
     /**
@@ -227,13 +228,6 @@ public class Fleet implements IFleet {
      */
     public void printStatus() {
         System.out.println(I18n.get("status.fleet_summary", this.getFloatingShips().size(), this.getSunkShips().size()));
-//		printAllShips();
-//		printFloatingShips();
-//		printShipsByCategory("Galeao");
-//		printShipsByCategory("Fragata");
-//		printShipsByCategory("Nau");
-//		printShipsByCategory("Caravela");
-//		printShipsByCategory("Barca");
     }
 
     /**

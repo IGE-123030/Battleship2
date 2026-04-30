@@ -29,10 +29,6 @@
 | ⁠ battleship.Move::processEnemyFire ⁠ | Long Method (Método com múltiplas responsabilidades: lógica, I18n e JSON) | Extract Method (Ex: ⁠ generateJSONResponse ⁠) | 122991 |
 | ⁠ battleship.Move::processEnemyFire ⁠ | Information Exposure (Uso de ⁠ System.out ⁠ misturado com lógica de serialização) | Extract Method (Separar lógica de visualização) | 122991 |
 | ⁠ battleship.Move ⁠ | Information Exposure (Devolve referências diretas de Listas mutáveis) | Encapsulate Collection (Usar ⁠ unmodifiableList ⁠) | 122991 |
-| ⁠ battleship.Move::processEnemyFire ⁠ | Complex Conditional (Ninhos de ⁠ if/else ⁠ para construir a String de log) | Replace Conditional with Guard Clause | 122991 |
-| ⁠ battleship.Fleet::createRandom ⁠ | Magic Number (Nomes de barcos e quantidades "hardcoded") | Extract Constant / Variable | 122991 |
-| ⁠ battleship.Fleet::addShip ⁠ | Complex Conditional (Múltiplas validações numa única linha) | Extract Method (Ex: ⁠ isValidAddition ⁠) | 122991 |
 | ⁠ battleship.Fleet::getFloatingShips ⁠ | Duplicate Code (Lógica de filtragem muito semelhante a ⁠ getSunkShips ⁠) | Substitute Algorithm (Usar Java Streams) | 122991 |
 | ⁠ battleship.Fleet ⁠ | Speculative Generality (Métodos comentados e prints não utilizados como ⁠ printAllShips ⁠) | Remove Dead Code | 122991 |
-| ⁠ battleship.Fleet::colisionRisk ⁠ | Legacy Control Flow (Uso de ⁠ for ⁠ indexado para percorrer coleção) | Replace with foreach | 122991 |
-| ⁠ battleship.Fleet ⁠ | Verbose Type Declaration (Ex: ⁠ new ArrayList<IShip>() ⁠) | Type Migration (Diamond Operator ⁠ <> ⁠) | 122991 |
+

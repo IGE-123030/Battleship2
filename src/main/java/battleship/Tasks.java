@@ -45,24 +45,12 @@ public class Tasks {
             if (command.equalsIgnoreCase(I18n.get(GERAFROTA))) {
 
                 myFleet = Fleet.createRandom();
-                game = new Game(myFleet);
-
-                game.printMyBoard(false, true);
-                System.out.println(I18n.get("msg.fleet.random"));
-
-                IGame finalGame = game;
-                javax.swing.SwingUtilities.invokeLater(() -> BoardGUI.showBoard(finalGame));
+                game = initializeGame(myFleet, "msg.fleet.random");
 
             } else if (command.equalsIgnoreCase(I18n.get(LEFROTA))) {
 
                 myFleet = buildFleet(in);
-                game = new Game(myFleet);
-
-                game.printMyBoard(false, true);
-                System.out.println(I18n.get("msg.fleet.custom"));
-
-                IGame finalGame1 = game;
-                javax.swing.SwingUtilities.invokeLater(() -> BoardGUI.showBoard(finalGame1));
+                game = initializeGame(myFleet, "msg.fleet.custom");
 
             } else if (command.equalsIgnoreCase(I18n.get(STATUS))) {
 
@@ -82,31 +70,7 @@ public class Tasks {
 
                 if (game != null) {
 
-                    System.out.println(I18n.get("msg.prompt.volley"));
-
-                    StopWatch relogio = new StopWatch();
-                    relogio.start();
-
-                    in.nextLine(); // limpar buffer
-                    String coords = in.nextLine();
-
-                    relogio.stop();
-
-                    long tempo = relogio.getTime() / 1000;
-                    System.out.println(I18n.get("msg.time_spent", tempo));
-
-                    Scanner coordsScanner = new Scanner(coords);
-                    game.readEnemyFire(coordsScanner);
-
-                    myFleet.printStatus();
-                    game.printMyBoard(true, false);
-
-                    BoardGUI.refresh();
-
-                    if (game.getRemainingShips() == 0) {
-                        game.over();
-                        break;
-                    }
+                    if (captureAndProcessFire(in, game, myFleet)) break;
 
                 } else {
                     System.out.println(I18n.get("msg.error.need_fleet"));
@@ -157,6 +121,46 @@ public class Tasks {
         }
 
         System.out.println(I18n.get(GOODBYE_MESSAGE));
+    }
+
+    private static @NotNull IGame initializeGame( IFleet myFleet, String key) {
+        Game game = new Game(myFleet);
+
+        game.printMyBoard(false, true);
+        System.out.println(I18n.get(key));
+
+        IGame finalGame = game;
+        javax.swing.SwingUtilities.invokeLater(() -> BoardGUI.showBoard(finalGame));
+        return game;
+    }
+
+    private static boolean captureAndProcessFire(Scanner in, IGame game, IFleet myFleet) {
+        System.out.println(I18n.get("msg.prompt.volley"));
+
+        StopWatch relogio = new StopWatch();
+        relogio.start();
+
+        in.nextLine(); // limpar buffer
+        String coords = in.nextLine();
+
+        relogio.stop();
+
+        long tempo = relogio.getTime() / 1000;
+        System.out.println(I18n.get("msg.time_spent", tempo));
+
+        Scanner coordsScanner = new Scanner(coords);
+        game.readEnemyFire(coordsScanner);
+
+        myFleet.printStatus();
+        game.printMyBoard(true, false);
+
+        BoardGUI.refresh();
+
+        if (game.getRemainingShips() == 0) {
+            game.over();
+            return true;
+        }
+        return false;
     }
 
     public static void menuHelp() {
@@ -235,6 +239,11 @@ public class Tasks {
 
         input = input.toUpperCase();
 
+        return parsePositionString(input, part2, part1);
+
+    }
+
+    private static @NotNull Position parsePositionString(String input, String part2, String part1) {
         if (input.matches("[A-Z]\\d+")) {
 
             char column = input.charAt(0);
@@ -252,7 +261,6 @@ public class Tasks {
         } else {
             throw new IllegalArgumentException("Formato inválido. Use 'A3' ou 'A 3'.");
         }
-
     }
 
 }

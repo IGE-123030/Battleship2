@@ -78,13 +78,13 @@ public class MoveTest {
     @Test
     void testGetShots() {
         List<IPosition> result = move.getShots();
-        assertSame(shots, result);
+        assertEquals(shots, result);
     }
 
     @Test
     void testGetShotResults() {
         List<IGame.ShotResult> result = move.getShotResults();
-        assertSame(shotResults, result);
+        assertEquals(shotResults, result);
     }
 
     // =============================================

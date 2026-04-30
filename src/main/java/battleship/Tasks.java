@@ -37,56 +37,60 @@ public class Tasks {
 
         menuHelp();
 
-        String command = readComand(in);
+        String command = readCommand(in);
+
 
         while (!command.equalsIgnoreCase(I18n.get(DESISTIR))) {
+            String normalized = normalizeCommand(command);
+            switch (normalized) {
 
-            if (command.equalsIgnoreCase(I18n.get(GERAFROTA))) {
+                case "GENFLEET" -> {
+                    myFleet = Fleet.createRandom();
+                    game = initializeGame(myFleet, "msg.fleet.random");
+                }
 
-                myFleet = Fleet.createRandom();
-                game = initializeGame(myFleet, "msg.fleet.random");
+                case "LOADFLEET" -> {
+                    myFleet = buildFleet(in);
+                    game = initializeGame(myFleet, "msg.fleet.custom");
+                }
 
-            } else if (command.equalsIgnoreCase(I18n.get(LEFROTA))) {
+                case "STATUS" -> printStatus(myFleet);
 
-                myFleet = buildFleet(in);
-                game = initializeGame(myFleet, "msg.fleet.custom");
+                case "MAP" -> printMap(game);
 
-            } else if (command.equalsIgnoreCase(I18n.get(STATUS))) {
-
-                printStatus(myFleet);
-
-            } else if (command.equalsIgnoreCase(I18n.get(MAPA))) {
-
-                printMap(game);
-
-            } else if (command.equalsIgnoreCase(I18n.get(RAJADA))) {
-
-                if (game != null && captureAndProcessFire(in, game, myFleet)) break;
-
+                case "VOLLEY" -> {
+                    if (game != null && captureAndProcessFire(in, game, myFleet)) {
+                        return;
+                    }
                     System.out.println(I18n.get("msg.error.need_fleet"));
+                }
 
+                case "SIMULATE" -> simulateGame(game, myFleet);
 
-            } else if (command.equalsIgnoreCase(I18n.get(SIMULA))) {
+                case "SHOTS" -> printShots(game);
 
-                simulateGame(game, myFleet);
+                case "HELP" -> menuHelp();
 
-            } else if (command.equalsIgnoreCase(I18n.get(TIROS))) {
-
-                printShots(game);
-
-            } else if (command.equalsIgnoreCase(I18n.get(AJUDA))) {
-
-                menuHelp();
-
-            } else {
-
-                System.out.println(I18n.get("msg.error.unknown_cmd"));
+                case "UNKNOWN" ->
+                        System.out.println(I18n.get("msg.error.unknown_cmd"));
             }
 
-            command = readComand(in);
+            command = readCommand(in);
         }
 
         System.out.println(I18n.get(GOODBYE_MESSAGE));
+    }
+
+    private static String normalizeCommand(String command) {
+        if (command.equalsIgnoreCase(I18n.get(GERAFROTA))) return "GENFLEET";
+        if (command.equalsIgnoreCase(I18n.get(LEFROTA))) return "LOADFLEET";
+        if (command.equalsIgnoreCase(I18n.get(STATUS))) return "STATUS";
+        if (command.equalsIgnoreCase(I18n.get(MAPA))) return "MAP";
+        if (command.equalsIgnoreCase(I18n.get(RAJADA))) return "VOLLEY";
+        if (command.equalsIgnoreCase(I18n.get(SIMULA))) return "SIMULATE";
+        if (command.equalsIgnoreCase(I18n.get(TIROS))) return "SHOTS";
+        if (command.equalsIgnoreCase(I18n.get(AJUDA))) return "HELP";
+        return "UNKNOWN";
     }
 
     private static void printStatus(IFleet myFleet) {
@@ -134,7 +138,7 @@ public class Tasks {
             System.out.println(I18n.get("msg.error.need_fleet"));
     }
 
-    private static String readComand(Scanner in) {
+    private static String readCommand(Scanner in) {
         String command;
         System.out.print("> ");
         command = in.next();

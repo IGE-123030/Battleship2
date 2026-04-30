@@ -21,7 +21,6 @@
 | `battleship.Tasks::menu` | Switch Statements | Replace with Enhanced Switch | 122983 |
 | `battleship.Tasks::readClassicPosition` | Long Method | Extract Method | 122983 |
 | `battleship.Tasks` | Duplicate Code | Extract Method | 122983 |
-|
 | `battleship.Tasks` | Information Exposure (System.out em lógica) | Extract Method | 122983 |
 | `battleship.Position::randomPosition` | Feature Envy (Dependência excessiva de `Game.BOARD_SIZE`) | Move Method / Parameterize Method | 122983 |
 | `battleship.Position` | Duplicate Code (Lógica de conversão 'A' + row repetida) | Extract Method (Ex: `rowToChar`) | 122983 |

@@ -37,8 +37,7 @@ public class Tasks {
 
         menuHelp();
 
-        System.out.print("> ");
-        String command = in.next();
+        String command = readComand(in);
 
         while (!command.equalsIgnoreCase(I18n.get(DESISTIR))) {
 
@@ -54,58 +53,26 @@ public class Tasks {
 
             } else if (command.equalsIgnoreCase(I18n.get(STATUS))) {
 
-                if (myFleet != null)
-                    myFleet.printStatus();
-                else
-                    System.out.println(I18n.get("msg.error.need_fleet"));
+                printStatus(myFleet);
 
             } else if (command.equalsIgnoreCase(I18n.get(MAPA))) {
 
-                if (game != null)
-                    game.printMyBoard(false, true);
-                else
-                    System.out.println(I18n.get("msg.error.need_fleet"));
+                printMap(game);
 
             } else if (command.equalsIgnoreCase(I18n.get(RAJADA))) {
 
-                if (game != null) {
+                if (game != null && captureAndProcessFire(in, game, myFleet)) break;
 
-                    if (captureAndProcessFire(in, game, myFleet)) break;
-
-                } else {
                     System.out.println(I18n.get("msg.error.need_fleet"));
-                }
+
 
             } else if (command.equalsIgnoreCase(I18n.get(SIMULA))) {
 
-                if (game != null) {
-
-                    while (game.getRemainingShips() > 0) {
-
-                        game.randomEnemyFire();
-                        myFleet.printStatus();
-                        game.printMyBoard(true, false);
-
-                        BoardGUI.refresh();
-
-                        try {
-                            //noinspection BusyWait
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-
-                    game.over();
-
-                } else {
-                    System.out.println(I18n.get("msg.error.need_fleet"));
-                }
+                simulateGame(game, myFleet);
 
             } else if (command.equalsIgnoreCase(I18n.get(TIROS))) {
 
-                if (game != null)
-                    game.printMyBoard(true, true);
+                printShots(game);
 
             } else if (command.equalsIgnoreCase(I18n.get(AJUDA))) {
 
@@ -116,11 +83,62 @@ public class Tasks {
                 System.out.println(I18n.get("msg.error.unknown_cmd"));
             }
 
-            System.out.print("> ");
-            command = in.next();
+            command = readComand(in);
         }
 
         System.out.println(I18n.get(GOODBYE_MESSAGE));
+    }
+
+    private static void printStatus(IFleet myFleet) {
+        if (myFleet != null)
+            myFleet.printStatus();
+        else
+            System.out.println(I18n.get("msg.error.need_fleet"));
+    }
+
+    private static void printShots(IGame game) {
+        if (game != null)
+            game.printMyBoard(true, true);
+    }
+
+    private static void simulateGame(IGame game, IFleet myFleet) {
+        if (game != null) {
+
+            while (game.getRemainingShips() > 0) {
+
+                game.randomEnemyFire();
+                myFleet.printStatus();
+                game.printMyBoard(true, false);
+
+                BoardGUI.refresh();
+
+                try {
+                    //noinspection BusyWait
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            game.over();
+
+        } else {
+            System.out.println(I18n.get("msg.error.need_fleet"));
+        }
+    }
+
+    private static void printMap(IGame game) {
+        if (game != null)
+            game.printMyBoard(false, true);
+        else
+            System.out.println(I18n.get("msg.error.need_fleet"));
+    }
+
+    private static String readComand(Scanner in) {
+        String command;
+        System.out.print("> ");
+        command = in.next();
+        return command;
     }
 
     private static @NotNull IGame initializeGame( IFleet myFleet, String key) {

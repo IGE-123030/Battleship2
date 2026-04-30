@@ -37,126 +37,175 @@ public class Tasks {
 
         menuHelp();
 
-        System.out.print("> ");
-        String command = in.next();
+        String command = readCommand(in);
+
 
         while (!command.equalsIgnoreCase(I18n.get(DESISTIR))) {
+            String normalized = normalizeCommand(command);
+            switch (normalized) {
 
-            if (command.equalsIgnoreCase(I18n.get(GERAFROTA))) {
-
-                myFleet = Fleet.createRandom();
-                game = new Game(myFleet);
-
-                game.printMyBoard(false, true);
-                System.out.println(I18n.get("msg.fleet.random"));
-
-                IGame finalGame = game;
-                javax.swing.SwingUtilities.invokeLater(() -> BoardGUI.showBoard(finalGame));
-
-            } else if (command.equalsIgnoreCase(I18n.get(LEFROTA))) {
-
-                myFleet = buildFleet(in);
-                game = new Game(myFleet);
-
-                game.printMyBoard(false, true);
-                System.out.println(I18n.get("msg.fleet.custom"));
-
-                IGame finalGame1 = game;
-                javax.swing.SwingUtilities.invokeLater(() -> BoardGUI.showBoard(finalGame1));
-
-            } else if (command.equalsIgnoreCase(I18n.get(STATUS))) {
-
-                if (myFleet != null)
-                    myFleet.printStatus();
-                else
-                    System.out.println(I18n.get("msg.error.need_fleet"));
-
-            } else if (command.equalsIgnoreCase(I18n.get(MAPA))) {
-
-                if (game != null)
-                    game.printMyBoard(false, true);
-                else
-                    System.out.println(I18n.get("msg.error.need_fleet"));
-
-            } else if (command.equalsIgnoreCase(I18n.get(RAJADA))) {
-
-                if (game != null) {
-
-                    System.out.println(I18n.get("msg.prompt.volley"));
-
-                    StopWatch relogio = new StopWatch();
-                    relogio.start();
-
-                    in.nextLine(); // limpar buffer
-                    String coords = in.nextLine();
-
-                    relogio.stop();
-
-                    long tempo = relogio.getTime() / 1000;
-                    System.out.println(I18n.get("msg.time_spent", tempo));
-
-                    Scanner coordsScanner = new Scanner(coords);
-                    game.readEnemyFire(coordsScanner);
-
-                    myFleet.printStatus();
-                    game.printMyBoard(true, false);
-
-                    BoardGUI.refresh();
-
-                    if (game.getRemainingShips() == 0) {
-                        game.over();
-                        break;
-                    }
-
-                } else {
-                    System.out.println(I18n.get("msg.error.need_fleet"));
+                case "GENFLEET" -> {
+                    myFleet = Fleet.createRandom();
+                    game = initializeGame(myFleet, "msg.fleet.random");
                 }
 
-            } else if (command.equalsIgnoreCase(I18n.get(SIMULA))) {
+                case "LOADFLEET" -> {
+                    myFleet = buildFleet(in);
+                    game = initializeGame(myFleet, "msg.fleet.custom");
+                }
 
-                if (game != null) {
+                case "STATUS" -> printStatus(myFleet);
 
-                    while (game.getRemainingShips() > 0) {
+                case "MAP" -> printMap(game);
 
-                        game.randomEnemyFire();
-                        myFleet.printStatus();
-                        game.printMyBoard(true, false);
-
-                        BoardGUI.refresh();
-
-                        try {
-                            //noinspection BusyWait
-                            Thread.sleep(3000);
-                        } catch (InterruptedException e) {
-                            Thread.currentThread().interrupt();
+                case "VOLLEY" -> {
+                    if (existsGame(game)) {
+                        if (captureAndProcessFire(in, game, myFleet)) {
+                            return;
                         }
                     }
-
-                    game.over();
-
-                } else {
-                    System.out.println(I18n.get("msg.error.need_fleet"));
                 }
 
-            } else if (command.equalsIgnoreCase(I18n.get(TIROS))) {
+                case "SIMULATE" -> simulateGame(game, myFleet);
 
-                if (game != null)
-                    game.printMyBoard(true, true);
+                case "SHOTS" -> printShots(game);
 
-            } else if (command.equalsIgnoreCase(I18n.get(AJUDA))) {
+                case "HELP" -> menuHelp();
 
-                menuHelp();
-
-            } else {
-
-                System.out.println(I18n.get("msg.error.unknown_cmd"));
+                case "UNKNOWN" ->
+                        System.out.println(I18n.get("msg.error.unknown_cmd"));
             }
 
-            System.out.print("> ");
-            command = in.next();
+            command = readCommand(in);
         }
 
         System.out.println(I18n.get(GOODBYE_MESSAGE));
+    }
+
+    private static void printNeedFleetError() {
+        System.out.println(I18n.get("msg.error.need_fleet"));
+    }
+
+    private static String normalizeCommand(String command) {
+        if (command.equalsIgnoreCase(I18n.get(GERAFROTA))) return "GENFLEET";
+        if (command.equalsIgnoreCase(I18n.get(LEFROTA))) return "LOADFLEET";
+        if (command.equalsIgnoreCase(I18n.get(STATUS))) return "STATUS";
+        if (command.equalsIgnoreCase(I18n.get(MAPA))) return "MAP";
+        if (command.equalsIgnoreCase(I18n.get(RAJADA))) return "VOLLEY";
+        if (command.equalsIgnoreCase(I18n.get(SIMULA))) return "SIMULATE";
+        if (command.equalsIgnoreCase(I18n.get(TIROS))) return "SHOTS";
+        if (command.equalsIgnoreCase(I18n.get(AJUDA))) return "HELP";
+        return "UNKNOWN";
+    }
+
+    private static void printStatus(IFleet myFleet) {
+        if (myFleet != null)
+            myFleet.printStatus();
+        else
+            printNeedFleetError();
+    }
+
+    private static void printShots(IGame game) {
+        if (existsGame(game))
+            game.printMyBoard(true, true);
+    }
+
+    private static void simulateGame(IGame game, IFleet myFleet) {
+        if (existsGame(game)) {
+
+            while (game.getRemainingShips() > 0) {
+
+                game.randomEnemyFire();
+                myFleet.printStatus();
+                game.printMyBoard(true, false);
+
+                BoardGUI.refresh();
+
+                try {
+                    //noinspection BusyWait
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            game.over();
+
+        } else {
+            printNeedFleetError();
+        }
+    }
+
+    private static boolean existsGame(IGame game) {
+        if (game == null) {
+            printNeedFleetError();
+            return false;
+        }
+        return true;
+    }
+
+    private static void printMap(IGame game) {
+        if (existsGame(game))
+            game.printMyBoard(false, true);
+    }
+
+    private static String readCommand(Scanner in) {
+        String command;
+        System.out.print("> ");
+        command = in.next();
+        return command;
+    }
+
+    private static @NotNull IGame initializeGame( IFleet myFleet, String key) {
+        Game game = new Game(myFleet);
+
+        game.printMyBoard(false, true);
+        System.out.println(I18n.get(key));
+
+        IGame finalGame = game;
+        javax.swing.SwingUtilities.invokeLater(() -> BoardGUI.showBoard(finalGame));
+        return game;
+    }
+
+    private static boolean captureAndProcessFire(Scanner in, IGame game, IFleet myFleet) {
+        System.out.println(I18n.get("msg.prompt.volley"));
+
+        StopWatch relogio = new StopWatch();
+        relogio.start();
+
+        in.nextLine(); // limpar buffer
+        String coords = in.nextLine();
+
+        relogio.stop();
+
+        long tempo = relogio.getTime() / 1000;
+        printTimeSpent(tempo);
+
+        processFire(game, myFleet, coords);
+
+        return gameOver(game);
+    }
+
+    private static void printTimeSpent(long tempo) {
+        System.out.println(I18n.get("msg.time_spent", tempo));
+    }
+
+    private static boolean gameOver(IGame game) {
+        if (game.getRemainingShips() == 0) {
+            game.over();
+            return true;
+        }
+        return false;
+    }
+
+    private static void processFire(IGame game, IFleet myFleet, String coords) {
+        Scanner coordsScanner = new Scanner(coords);
+        game.readEnemyFire(coordsScanner);
+
+        myFleet.printStatus();
+        game.printMyBoard(true, false);
+
+        BoardGUI.refresh();
     }
 
     public static void menuHelp() {
@@ -235,6 +284,11 @@ public class Tasks {
 
         input = input.toUpperCase();
 
+        return parsePositionString(input, part2, part1);
+
+    }
+
+    private static @NotNull Position parsePositionString(String input, String part2, String part1) {
         if (input.matches("[A-Z]\\d+")) {
 
             char column = input.charAt(0);
@@ -252,7 +306,6 @@ public class Tasks {
         } else {
             throw new IllegalArgumentException("Formato inválido. Use 'A3' ou 'A 3'.");
         }
-
     }
 
 }

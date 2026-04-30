@@ -59,10 +59,11 @@ public class Tasks {
                 case "MAP" -> printMap(game);
 
                 case "VOLLEY" -> {
-                    if (game != null && captureAndProcessFire(in, game, myFleet)) {
-                        return;
+                    if (existsGame(game)) {
+                        if (captureAndProcessFire(in, game, myFleet)) {
+                            return;
+                        }
                     }
-                    System.out.println(I18n.get("msg.error.need_fleet"));
                 }
 
                 case "SIMULATE" -> simulateGame(game, myFleet);
@@ -81,6 +82,10 @@ public class Tasks {
         System.out.println(I18n.get(GOODBYE_MESSAGE));
     }
 
+    private static void printNeedFleetError() {
+        System.out.println(I18n.get("msg.error.need_fleet"));
+    }
+
     private static String normalizeCommand(String command) {
         if (command.equalsIgnoreCase(I18n.get(GERAFROTA))) return "GENFLEET";
         if (command.equalsIgnoreCase(I18n.get(LEFROTA))) return "LOADFLEET";
@@ -97,16 +102,16 @@ public class Tasks {
         if (myFleet != null)
             myFleet.printStatus();
         else
-            System.out.println(I18n.get("msg.error.need_fleet"));
+            printNeedFleetError();
     }
 
     private static void printShots(IGame game) {
-        if (game != null)
+        if (existsGame(game))
             game.printMyBoard(true, true);
     }
 
     private static void simulateGame(IGame game, IFleet myFleet) {
-        if (game != null) {
+        if (existsGame(game)) {
 
             while (game.getRemainingShips() > 0) {
 
@@ -127,15 +132,21 @@ public class Tasks {
             game.over();
 
         } else {
-            System.out.println(I18n.get("msg.error.need_fleet"));
+            printNeedFleetError();
         }
     }
 
+    private static boolean existsGame(IGame game) {
+        if (game == null) {
+            printNeedFleetError();
+            return false;
+        }
+        return true;
+    }
+
     private static void printMap(IGame game) {
-        if (game != null)
+        if (existsGame(game))
             game.printMyBoard(false, true);
-        else
-            System.out.println(I18n.get("msg.error.need_fleet"));
     }
 
     private static String readCommand(Scanner in) {

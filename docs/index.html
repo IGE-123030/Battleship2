@@ -1,153 +1,544 @@
-<!DOCTYPE html>
-<html lang="en">
+import base64
+
+# O conteúdo HTML estruturado com CSS responsivo e limpo (tema náutico moderno)
+html_content = """<!DOCTYPE html>
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battleship Game Player</title>
-
+    <title>⚓ Battleship 2.0 - Dashboard</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        :root {
+            --primary-color: #1a365d;
+            --secondary-color: #2b6cb0;
+            --accent-color: #319795;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-muted: #718096;
+            --border-color: #e2e8f0;
+            --code-bg: #edf2f7;
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
+            --danger-color: #e53e3e;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            background: #f4f6f9;
-            color: #333;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 0;
         }
 
         header {
-            background: #1f3c88;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             padding: 40px 20px;
             text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         header h1 {
-            margin: 0;
             font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         header p {
-            margin-top: 10px;
+            font-size: 1.2rem;
             opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 20px auto;
+            font-style: italic;
         }
 
-        main {
-            max-width: 900px;
-            margin: auto;
-            padding: 20px;
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: white;
+        }
+        .bg-passing { background-color: #28a745; }
+        .bg-java { background-color: #007396; }
+        .bg-license { background-color: #6c757d; }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        nav {
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        nav h2 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        nav a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .video-links {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .video-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--danger-color);
+            font-weight: bold;
         }
 
         section {
-            background: white;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+
+        section h2 {
+            color: var(--primary-color);
+            border-left: 5px solid var(--accent-color);
+            padding-left: 12px;
             margin-bottom: 20px;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            font-size: 1.5rem;
         }
 
-        h2 {
-            color: #1f3c88;
-            margin-top: 0;
+        section h3 {
+            color: var(--secondary-color);
+            margin: 20px 0 10px 0;
+            font-size: 1.2rem;
         }
 
-        ul {
-            padding-left: 20px;
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* Tabelas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: var(--code-bg);
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Código */
+        pre {
+            background-color: #1e293b;
+            color: #f8fafc;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9rem;
         }
 
         code {
-            background: #eee;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            background-color: var(--code-bg);
             padding: 2px 6px;
-            border-radius: 5px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #d63384;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        /* Callouts / Bloco de Prompt */
+        .prompt-box {
+            background-color: #f0f4f8;
+            border-left: 4px solid var(--secondary-color);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: normal;
+        }
+
+        .prompt-box blockquote {
+            margin-bottom: 15px;
+            color: #334155;
+            white-space: pre-line;
+        }
+
+        .tip {
+            background-color: #ebf8ff;
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        /* Listas */
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 5px;
+        }
+
+        /* Elemento de Fórmula Matemática */
+        .math {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            font-weight: bold;
+            background: #edf2f7;
+            padding: 10px;
+            border-radius: 6px;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        /* Diagrama Simulado (Flow) */
+        .diagram {
+            background-color: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: monospace;
+            white-space: pre;
+            overflow-x: auto;
+            color: var(--primary-color);
+            line-height: 1.3;
         }
 
         footer {
             text-align: center;
-            padding: 20px;
+            padding: 30px 20px;
+            color: var(--text-muted);
             font-size: 0.9rem;
-            color: #777;
+            border-top: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            margin-top: 50px;
         }
 
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 1.8rem;
+        footer a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            section {
+                padding: 20px;
             }
 
-            main {
-                padding: 10px;
+            header h1 {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
-
 <body>
 
-<header>
-    <h1>Battleship Game Player</h1>
-    <p>Java project developed at ISCTE-IUL</p>
-</header>
+    <header>
+        <h1>⚓ Battleship 2.0</h1>
+        <p>A modern take on the classic naval warfare game, designed for the XVII century setting with updated software engineering patterns.</p>
+        <div class="badges">
+            <span class="badge bg-passing">Build: passing</span>
+            <span class="badge bg-java">Java: 17+</span>
+            <span class="badge bg-license">License: MIT</span>
+        </div>
+    </header>
 
-<main>
+    <div class="container">
+        
+        <nav>
+            <h2>📖 Tabela de Conteúdos</h2>
+            <ul>
+                <li><a href="#overview">Project Overview</a></li>
+                <li><a href="#features">Key Features</a></li>
+                <li><a href="#tech-stack">Technical Stack</a></li>
+                <li><a href="#installation">Installation & Setup</a></li>
+                <li><a href="#prompt-ai">Prompt Final & IA</a></li>
+                <li><a href="#documentation">Documentation & Architecture</a></li>
+                <li><a href="#roadmap">Roadmap</a></li>
+                <li><a href="#testing">Testes & CI</a></li>
+                <li><a href="#contributing">Contributing</a></li>
+            </ul>
+            <div class="video-links">
+                <a href="https://youtu.be/RS31wMh_lXI" target="_blank">📺 Vídeo da Parte B do enunciado</a>
+                <a href="https://youtu.be/YwQsVAAg5B8" target="_blank">📺 Vídeo da Parte D do enunciado</a>
+            </div>
+        </nav>
 
-    <section>
-        <h2>📌 Project Overview</h2>
-        <p>
-            Battleship Game Player is a Java implementation of the classic Battleship game,
-            developed as an academic project. It includes game logic, AI opponent, and a graphical interface.
-        </p>
-    </section>
+        <section id="overview">
+            <h2>🎯 Project Overview</h2>
+            <p>This project serves as a template and reference for students learning <strong>Object-Oriented Programming (OOP)</strong> and <strong>Software Quality</strong>. It simulates a battleship environment where players must strategically place ships and sink the enemy fleet.</p>
+            
+            <h3>🎮 The Rules</h3>
+            <p>The game is played on a grid (typically 10x10). The coordinate system is defined as:</p>
+            <div class="math">
+                (x, y) ∈ {0, …, 9} × {0, …, 9}
+            </div>
+            <p>Hits are calculated based on the intersection of the shot vector and the ship's bounding box.</p>
+        </section>
 
-    <section>
-        <h2>⚙️ Main Features</h2>
-        <ul>
-            <li>Full Battleship game engine (rules, ships, moves)</li>
-            <li>AI player logic</li>
-            <li>JavaFX graphical user interface (BoardGUI)</li>
-            <li>Fleet and ship management system</li>
-            <li>Move tracking and game state system</li>
-            <li>Database logging (DatabaseManager)</li>
-        </ul>
-    </section>
+        <section id="features">
+            <h2>✨ Key Features</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Grid System</strong></td>
+                        <td>Flexible N × N board generation.</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ship Varieties</strong></td>
+                        <td>Galleons, Frigates, and Brigantines (XVII Century theme).</td>
+                        <td>✅</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AI Opponent</strong></td>
+                        <td>Heuristic-based targeting system.</td>
+                        <td>🚧</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Network Play</strong></td>
+                        <td>Socket-based multiplayer.</td>
+                        <td>❌</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
 
-    <section>
-        <h2>🧩 Project Structure</h2>
-        <ul>
-            <li>Game / IGame – core logic</li>
-            <li>Fleet / Ship – ship system</li>
-            <li>Position / Move – gameplay tracking</li>
-            <li>BoardGUI – graphical interface</li>
-            <li>Tasks – game flow / input handling</li>
-        </ul>
-    </section>
+        <section id="tech-stack">
+            <h2>🛠 Technical Stack</h2>
+            <ul>
+                <li><strong>Language:</strong> Java 17</li>
+                <li><strong>Build Tool:</strong> Maven / Gradle</li>
+                <li><strong>Testing:</strong> JUnit 5</li>
+                <li><strong>Logging:</strong> Log4j2</li>
+            </ul>
+        </section>
 
-    <section>
-        <h2>🛠️ Technologies Used</h2>
-        <ul>
-            <li>Java 21</li>
-            <li>Maven</li>
-            <li>JavaFX</li>
-            <li>JUnit 5</li>
-            <li>Log4j</li>
-            <li>Jackson</li>
-        </ul>
-    </section>
+        <section id="installation">
+            <h2>🚀 Installation & Setup</h2>
+            <h3>Prerequisites</h3>
+            <p>JDK 17 or higher, Git.</p>
+            
+            <h3>Step-by-Step</h3>
+            <ol>
+                <li>
+                    <p><strong>Clone the repository:</strong></p>
+                    <pre><code class="language-bash">git clone https://github.com/britoeabreu/Battleship2.git</code></pre>
+                </li>
+                <li>
+                    <p><strong>Navigate to directory:</strong></p>
+                    <pre><code class="language-bash">cd Battleship2</code></pre>
+                </li>
+                <li>
+                    <p><strong>Compile and Run:</strong></p>
+                    <pre><code class="language-bash">javac Main.java && java Main</code></pre>
+                </li>
+            </ol>
+        </section>
 
-    <section>
-        <h2>🚀 How to Run</h2>
-        <pre><code>
-mvn clean package
-java -jar target/BattleshipGamePlayer-2.0.jar
-        </code></pre>
-    </section>
+        <section id="prompt-ai">
+            <h2>🤖 Prompt Final de Estratégia e IA (Few-Shot Prompting)</h2>
+            <p>Para treinar o nosso oponente de Inteligência Artificial, desenvolvemos o seguinte <em>prompt</em> que engloba as regras do jogo, o protocolo de comunicação via JSON e a estratégia de combate utilizando a técnica de <em>few-shot prompting</em>:</p>
+            
+            <div class="prompt-box">
+                <blockquote><strong>Atua como um Almirante perito no jogo da Batalha Naval (Descobrimentos Portugueses).</strong>
 
-    <section>
-        <h2>👨‍💻 Authors</h2>
-        <p>ISCTE-IUL - Software Engineering Project</p>
-    </section>
+<strong>AS REGRAS E A FROTA:</strong>
+O tabuleiro tem 10x10 (Linhas A-J, Colunas 1-10). A frota inimiga tem 11 navios: 4 Barcas (1 pos), 3 Caravelas (2 pos), 2 Naus (3 pos), 1 Fragata (4 pos) e 1 Galeão (5 pos em formato "T"). Os navios nunca se tocam, nem sequer nas diagonais.
 
-</main>
+<strong>A TÁTICA (DIÁRIO DE BORDO):</strong>
+1. Nunca repitas tiros nem atires fora do tabuleiro.
+2. Se atingires um navio, os teus próximos tiros devem ser nas posições contíguas (Norte, Sul, Este, Oeste) para o afundar.
+3. Evita atirar nas diagonais de navios atingidos (exceto no Galeão), pois os navios são linhas retas e não se tocam.
+4. Quando afundares um navio, marca mentalmente um "halo" de 1 quadrícula à volta de toda a carcaça como água. Não atires para aí.
 
-<footer>
-    © 2026 Battleship Game Player
-</footer>
+<strong>O PROTOCOLO DE COMUNICAÇÃO:</strong>
+Deves enviar a tua resposta seguindo obrigatoriamente esta estrutura, sem nunca exceder os 3 tiros:
+Linha de Comando: Escreve exatamente 3 coordenadas separadas por um único espaço (ex: A1 B5 G3).
+Bloco JSON: Logo abaixo, envia o array JSON com os mesmos 3 tiros no formato {"row": "A", "column": 1}.
+
+<strong>EXEMPLOS DE PENSAMENTO E RESPOSTA (FEW-SHOT):</strong>
+*Exemplo 1 - Tiro na água:* Input e Resposta...
+*Exemplo 2 - Caça ao alvo:* Input e Resposta...
+*Exemplo 3 - Navio Afundado:* Input e Resposta...</blockquote>
+            </div>
+        </section>
+
+        <section id="documentation">
+            <h2>📚 Documentation & Architecture</h2>
+            <p>You can access the generated Javadoc here: <a href="https://britoeabreu.github.io/Battleship2/" target="_blank">👉 Battleship2 API Documentation</a></p>
+            
+            <h3>Core Logic</h3>
+            <pre><code class="language-java">public class Ship {
+    private String name;
+    private int size;
+    private boolean isSunk;
+
+    // TODO: Implement damage logic
+    public void hit() {
+        // Implementation here
+    }
+}</code></pre>
+
+            <h3>Design Patterns Used</h3>
+            <ul>
+                <li><strong>Strategy Pattern:</strong> For different AI difficulty levels.</li>
+                <li><strong>Observer Pattern:</strong> To update the UI when a ship is hit.</li>
+            </ul>
+
+            <h3>Logic Flow</h3>
+            <div class="diagram">
+[Start Game] ──> [Place Ships] ──> [Player Turn]
+                                       │
+                                       ▼
+                               [Target Coordinate]
+                                       │
+                                       ▼
+                               {Hit or Miss?}
+                                 /        \
+                             (Hit)      (Miss)
+                               /            \
+                       [Check if Sunk]   [AI Turn]
+                               \            /
+                                └───><──────┘
+            </div>
+        </section>
+
+        <section id="roadmap">
+            <h2>🗺 Roadmap</h2>
+            <ul>
+                <li>✅ Basic grid implementation</li>
+                <li>✅ Ship placement validation</li>
+                <li>⬜ Add sound effects (SFX)</li>
+                <li>⬜ Implement "Fog of War" mechanic</li>
+                <li><strong>⬜ Multiplayer Integration</strong> (High Priority)</li>
+            </ul>
+        </section>
+
+        <section id="testing">
+            <h2>🧪 Testes e Integração Contínua (CI)</h2>
+            <p>Para garantir a qualidade do código e que as refabricações não introduzem erros, utilizamos JUnit 5/6.</p>
+            
+            <h3>Automação (Parte B)</h3>
+            <p>Configurámos um workflow no <strong>GitHub Actions</strong> que executa automaticamente:</p>
+            <ul>
+                <li><strong>Compilação:</strong> Verifica erros de sintaxe em cada Push.</li>
+                <li><strong>Testes Unitários:</strong> Executa a bateria de testes para validar o comportamento.</li>
+                <li><strong>Javadoc:</strong> Garante que a documentação técnica está atualizada.</li>
+            </ul>
+            
+            <p>Comando para execução local:</p>
+            <pre><code class="language-bash">mvn test</code></pre>
+
+            <div class="tip">
+                <strong>💡 Dica:</strong> Use the <code>-Dtest=ClassName</code> flag to run specific test suites during development.
+            </div>
+        </section>
+
+        <section id="contributing">
+            <h2>🤝 Contributing</h2>
+            <p>Contributions are what make the open-source community such an amazing place to learn, inspire, and create.</p>
+            <ol>
+                <li>Fork the Project</li>
+                <li>Create your Feature Branch (<code>git checkout -b feature/AmazingFeature</code>)</li>
+                <li>Commit your Changes (<code>git commit -m 'Add some AmazingFeature'</code>)</li>
+                <li>Push to the Branch (<code>git push origin feature/AmazingFeature</code>)</li>
+                <li>Open a <strong>Pull Request</strong></li>
+            </ol>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Distributed under the MIT License. See <code>LICENSE</code> for more information.</p>
+        <p><strong>Maintained by:</strong> <a href="https://github.com/britoeabreu" target="_blank">@britoeabreu</a> | Created for the Software Engineering students at ISCTE-IUL.</p>
+    </footer>
 
 </body>
 </html>
+"""
+
+with open("index.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("Ficheiro index.html gerado com sucesso!")

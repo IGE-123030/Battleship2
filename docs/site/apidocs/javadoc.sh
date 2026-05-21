@@ -1,0 +1,1 @@
+/usr/lib/jvm/msopenjdk-current/bin/javadoc @options @packages

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>pt.iscte-iul.istar</groupId>
@@ -9,33 +10,28 @@
 	<version>2.0</version>
 
 	<name>BattleshipGame</name>
-	<description>A Battleship Game player.</description>
-	<url>https://github.com/britoeabreu/Battleship2.git</url>
+	<description>Battleship Game Player</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>
-		<maven.compiler.version>3.11.0</maven.compiler.version>
 
 		<junit.jupiter.version>5.10.2</junit.jupiter.version>
-		<junit.jupiterplatform.version>1.10.2</junit.jupiterplatform.version>
-
 		<maven.surefire.version>3.1.2</maven.surefire.version>
-		<maven.shade.version>3.5.0</maven.shade.version>
-
-		<apache.log4j.version>2.20.0</apache.log4j.version>
 
 		<jackson.version>2.17.1</jackson.version>
-
-		<allure.version>2.31.0</allure.version>
-
-		<jetbrains.annotations.version>26.1.0</jetbrains.annotations.version>
+		<log4j.version>2.20.0</log4j.version>
+		<commons.version>3.14.0</commons.version>
+		<icu.version>74.2</icu.version>
+		<jetbrains.version>26.1.0</jetbrains.version>
+		<javafx.version>21</javafx.version>
 	</properties>
 
 	<dependencies>
-		<!-- JUnit Jupiter API -->
+
+		<!-- JUnit -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-api</artifactId>
@@ -43,7 +39,6 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- JUnit Jupiter Engine -->
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
@@ -51,110 +46,121 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.junit.platform</groupId>
-			<artifactId>junit-platform-launcher</artifactId>
-			<version>${junit.jupiterplatform.version}</version>
-			<scope>test</scope>
-		</dependency>
-
+		<!-- Log4j -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>${apache.log4j.version}</version>
-			<scope>compile</scope>
+			<version>${log4j.version}</version>
 		</dependency>
 
+		<!-- Jackson -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>io.qameta.allure</groupId>
-			<artifactId>allure-java-commons-test</artifactId>
-			<version>${allure.version}</version>
-		</dependency>
-
-		<!-- Source: https://mvnrepository.com/artifact/org.jetbrains/annotations -->
+		<!-- JetBrains annotations -->
 		<dependency>
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
-			<version>${jetbrains.annotations.version}</version>
-			<scope>compile</scope>
+			<version>${jetbrains.version}</version>
+		</dependency>
+
+		<!-- Apache Commons (StopWatch etc) -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons.version}</version>
+		</dependency>
+
+		<!-- ICU4J -->
+		<dependency>
+			<groupId>com.ibm.icu</groupId>
+			<artifactId>icu4j</artifactId>
+			<version>${icu.version}</version>
+		</dependency>
+
+		<!-- JavaFX -->
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>${javafx.version}</version>
 		</dependency>
 
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.33</version>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-graphics</artifactId>
+			<version>${javafx.version}</version>
 		</dependency>
 
-        <!-- Biblioteca Maven Relógio -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.14.0</version>
-        </dependency>
-    
-      <!-- Biblioteca Maven Internacionalização -->
-        <dependency>
-            <groupId>com.ibm.icu</groupId>
-            <artifactId>icu4j</artifactId>
-            <version>74.2</version>
-        </dependency>
-    <!--Biblioteca Maven Vizualização Tabuleiro-->
-     <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId>
-            <version>21</version>
-        </dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+
+			<!-- Compiler -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven.compiler.version}</version>
+				<version>3.11.0</version>
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
 				</configuration>
 			</plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>${maven.shade.version}</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<createDependencyReducedPom>false</createDependencyReducedPom>
-							<transformers>
-								<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>battleship.Main</mainClass>
-								</transformer>
-							</transformers>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			<!-- Tests -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.version}</version>
+			</plugin>
+
+			<!-- SITE (GitHub Pages) -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.12.1</version>
 				<configuration>
-					<includes>
-						<include>**/*Test.java</include>
-					</includes>
+					<outputDirectory>${project.basedir}/docs</outputDirectory>
 				</configuration>
 			</plugin>
+
+			<!-- JAVADOC -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.6.3</version>
+				<configuration>
+					<failOnError>false</failOnError>
+					<doclint>none</doclint>
+					<additionalOptions>
+						<additionalOption>-Xdoclint:none</additionalOption>
+					</additionalOptions>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
+
+	<!-- REPORTS FOR mvn site -->
+	<reporting>
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.5.0</version>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.6.3</version>
+			</plugin>
+
+		</plugins>
+	</reporting>
+
 </project>

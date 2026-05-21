@@ -11,7 +11,7 @@ import util.I18n;
 
 public class Tasks {
 
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(Tasks.class);
 
     private static final String GOODBYE_MESSAGE = "msg.goodbye";
 
